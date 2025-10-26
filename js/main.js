@@ -471,10 +471,23 @@ function returnToElevatorWithLoopingCredits() {
     endScaryDialog.pause();
     endScaryDialog.currentTime = 0;
     
+    // Remove any fade to black that might be blocking view
+    fadeToBlack.classList.remove('active');
+    
+    // Hide any remaining game containers
+    doorGameContainer.classList.remove('active');
+    phoneGameContainer.classList.remove('active');
+    redlightGameContainer.classList.remove('active');
+    shootingGalleryContainer.classList.remove('active');
+    blinkGameContainer.classList.remove('active');
+    cookieGameContainer.classList.remove('active');
+    recordingPlayback.classList.remove('active');
+    
     // Show elevator again
     elevatorContainer.style.display = 'block';
     elevatorContainer.style.top = '50%';
     elevatorContainer.classList.add('shaking');
+    elevatorContainer.classList.remove('hidden');
     
     // Play elevator music on loop
     audioPlayer.currentTime = 0;
@@ -534,9 +547,17 @@ const MONSTER_CREDITS = [
 // Looping credits that never end
 function startLoopingCredits() {
     console.log('🎬 Starting looping monster credits...');
+    
+    // Clear any screen effects
+    document.body.classList.remove('screen-glitching', 'screen-flashing');
+    document.body.style.filter = '';
+    
+    // Ensure credits are visible
     creditsContainer.classList.add('active');
+    creditsContainer.classList.remove('glitching', 'flashing');
     creditsContainerRight.classList.remove('active'); // Only use left side
     creditsContainer.innerHTML = '';
+    creditsContainer.style.display = 'flex';
     
     let currentIndex = 0;
     
