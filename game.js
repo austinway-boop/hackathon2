@@ -2861,6 +2861,9 @@ function startShootingGallery() {
     crosshair.className = 'crosshair';
     shootingGalleryContainer.appendChild(crosshair);
     
+    // Add click handler for missing shots (clicks on background)
+    shootingGalleryContainer.addEventListener('click', handleShootingGalleryClick);
+    
     // Start Midnight Carousel music
     midnightCarouselMusic.currentTime = 0;
     midnightCarouselMusic.play();
@@ -2894,7 +2897,9 @@ function createTarget() {
     targetsContainer.appendChild(targetElement);
     
     // Add click handler
-    targetElement.addEventListener('click', function() {
+    // Add click handler - stop propagation to prevent background click
+    targetElement.addEventListener('click', function(e) {
+        e.stopPropagation();
         shootTarget(targetId);
     });
     
@@ -2952,6 +2957,42 @@ function spawnTargets(count) {
     for (let i = 0; i < count; i++) {
         createTarget();
     }
+}
+
+// Handle clicks on the shooting gallery (for misses)
+function handleShootingGalleryClick(e) {
+    if (!shootingGalleryActive) return;
+    
+    // If clicking directly on the container or background (not a target), it's a miss
+    if (e.target === shootingGalleryContainer || e.target.classList.contains('gallery-background')) {
+        shootMiss(e);
+    }
+}
+
+// Handle missing a shot
+function shootMiss(e) {
+    // Play gunshot sound (same as hit)
+    gunshotSound.currentTime = 0;
+    gunshotSound.play();
+    
+    // Gun recoil animation
+    gunSprite.classList.add('recoil');
+    setTimeout(() => {
+        gunSprite.classList.remove('recoil');
+    }, 150);
+    
+    // Create a miss effect at click position
+    const missEffect = document.createElement('div');
+    missEffect.className = 'miss-effect';
+    missEffect.style.left = e.clientX + 'px';
+    missEffect.style.top = e.clientY + 'px';
+    missEffect.textContent = 'MISS';
+    shootingGalleryContainer.appendChild(missEffect);
+    
+    // Remove after animation
+    setTimeout(() => {
+        missEffect.remove();
+    }, 800);
 }
 
 // Shoot a target
@@ -3087,6 +3128,9 @@ function endShootingGallery() {
     if (crosshair) {
         crosshair.remove();
     }
+    
+    // Remove click handler
+    shootingGalleryContainer.removeEventListener('click', handleShootingGalleryClick);
     
     // Stop music
     midnightCarouselMusic.pause();
