@@ -436,9 +436,9 @@ async function playbackRecordings() {
     });
 }
 
-// Final jumpscare and return to elevator with looping credits
+// Final INTENSE jumpscare sequence
 function finalJumpscare() {
-    console.log('💀 Preparing final jumpscare...');
+    console.log('💀 Preparing INTENSE final jumpscare...');
     
     // Hide playback
     recordingPlayback.classList.remove('active');
@@ -447,31 +447,57 @@ function finalJumpscare() {
     suspenseMusic.pause();
     suspenseMusic.currentTime = 0;
     
-    // Show jumpscare 4 immediately
-    jumpscare4.classList.add('active');
+    // INTENSE FLASHING EFFECT
+    document.body.style.filter = 'brightness(3)';
+    setTimeout(() => {
+        document.body.style.filter = 'brightness(0.1)';
+    }, 50);
+    setTimeout(() => {
+        document.body.style.filter = 'brightness(3)';
+    }, 100);
+    setTimeout(() => {
+        document.body.style.filter = '';
+    }, 150);
     
-    // Play jumpscare sound 2
+    // Show jumpscare 4 with SHAKING
+    jumpscare4.classList.add('active', 'shaking');
+    
+    // Play MULTIPLE jumpscare sounds for intensity
     jumpscareSound2.currentTime = 0;
     jumpscareSound2.volume = 1.0;
     jumpscareSound2.play();
-    console.log('💀 FINAL JUMPSCARE 4!');
     
-    // Hide jumpscare after 1 second and return to elevator
+    // Layer another sound for extra intensity
     setTimeout(() => {
-        jumpscare4.classList.remove('active');
-        returnToElevatorWithLoopingCredits();
-    }, 1000);
+        jumpscareSound3_1.currentTime = 0;
+        jumpscareSound3_1.volume = 0.8;
+        jumpscareSound3_1.play();
+    }, 100);
+    
+    console.log('💀 INTENSE FINAL JUMPSCARE 4!');
+    
+    // Keep jumpscare longer for more impact (1.5 seconds)
+    setTimeout(() => {
+        jumpscare4.classList.remove('active', 'shaking');
+        // Fade to black
+        fadeToBlack.classList.add('active');
+        
+        // After fade, start elevator RISING and real credits
+        setTimeout(() => {
+            startElevatorRisingWithFinalCredits();
+        }, 1500);
+    }, 1500);
 }
 
-// Return to elevator and show looping fake credits
-function returnToElevatorWithLoopingCredits() {
-    console.log('🛗 Returning to elevator with looping credits...');
+// Start elevator RISING with FINAL credits
+function startElevatorRisingWithFinalCredits() {
+    console.log('🛗 Elevator RISING with final credits...');
     
     // Stop all sounds
     endScaryDialog.pause();
     endScaryDialog.currentTime = 0;
     
-    // Remove any fade to black that might be blocking view
+    // Remove fade to black
     fadeToBlack.classList.remove('active');
     
     // Hide any remaining game containers
@@ -483,24 +509,132 @@ function returnToElevatorWithLoopingCredits() {
     cookieGameContainer.classList.remove('active');
     recordingPlayback.classList.remove('active');
     
-    // Show elevator again
+    // Show elevator RISING (moving UP, not down)
     elevatorContainer.style.display = 'block';
     elevatorContainer.style.top = '50%';
-    elevatorContainer.classList.add('shaking');
-    elevatorContainer.classList.remove('hidden');
+    elevatorContainer.classList.remove('shaking', 'hidden');
     
-    // Play elevator music on loop
-    audioPlayer.currentTime = 0;
-    audioPlayer.loop = true;
-    audioPlayer.volume = 0.5;
-    audioPlayer.play();
-    console.log('🎵 Playing elevator music on loop');
+    // Animate elevator RISING (going UP)
+    let currentTop = 50; // Start at 50%
+    const riseInterval = setInterval(() => {
+        currentTop -= 0.5; // Move UP slowly
+        elevatorContainer.style.top = currentTop + '%';
+        
+        // Once it goes off screen, we can stop
+        if (currentTop < -50) {
+            clearInterval(riseInterval);
+            elevatorContainer.style.display = 'none';
+        }
+    }, 50);
     
-    // Show background
+    // Play END MUSIC (the proper ending music)
+    endMusic.currentTime = 0;
+    endMusic.volume = 0.7;
+    endMusic.loop = false; // Play once, not looping
+    endMusic.play();
+    console.log('🎵 Playing end music');
+    
+    // Show background moving UP
     backgroundTexture.classList.add('visible', 'moving');
     
-    // Start looping fake credits
-    startLoopingCredits();
+    // Start REAL final credits (not the looping monster credits)
+    startFinalCredits();
+}
+
+// Start FINAL credits (the real ending credits)
+function startFinalCredits() {
+    console.log('🎬 Starting FINAL credits...');
+    
+    // Clear any screen effects
+    document.body.classList.remove('screen-glitching', 'screen-flashing');
+    document.body.style.filter = '';
+    
+    // Show credits on both sides like the original
+    creditsContainer.classList.add('active');
+    creditsContainer.classList.remove('glitching', 'flashing');
+    creditsContainerRight.classList.add('active');
+    creditsContainerRight.classList.remove('glitching', 'flashing');
+    creditsContainer.innerHTML = '';
+    creditsContainerRight.innerHTML = '';
+    creditsContainer.style.display = 'flex';
+    creditsContainerRight.style.display = 'flex';
+    
+    let currentIndex = 0;
+    
+    // Function to add a single credit (alternates left/right)
+    function addCredit() {
+        if (currentIndex >= CREDITS.length) {
+            console.log('🎬 All credits shown! THE END');
+            return; // All credits shown - proper ending
+        }
+        
+        const credit = CREDITS[currentIndex];
+        const useLeftSide = currentIndex % 2 === 0; // Alternate sides
+        const targetContainer = useLeftSide ? creditsContainer : creditsContainerRight;
+        
+        const creditDiv = document.createElement('div');
+        creditDiv.className = 'credit-line';
+        
+        // Apply type-specific styling (NO glitching/corrupted for proper ending)
+        if (credit.type === 'section') {
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '24px';
+            creditDiv.style.fontWeight = 'bold';
+            creditDiv.style.marginTop = '40px';
+        } else if (credit.type === 'role') {
+            creditDiv.className = 'credit-line role';
+            creditDiv.textContent = credit.text;
+            if (credit.name) {
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'credit-line role';
+                nameDiv.textContent = credit.name;
+                nameDiv.style.fontWeight = 'bold';
+                targetContainer.appendChild(creditDiv);
+                targetContainer.appendChild(nameDiv);
+                currentIndex++;
+                return;
+            }
+        } else if (credit.type === 'monster') {
+            creditDiv.classList.add('monster');
+            creditDiv.textContent = credit.text;
+            if (credit.name) {
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'credit-line monster';
+                nameDiv.textContent = credit.name;
+                nameDiv.style.fontWeight = 'bold';
+                targetContainer.appendChild(creditDiv);
+                targetContainer.appendChild(nameDiv);
+                currentIndex++;
+                return;
+            }
+        } else {
+            creditDiv.textContent = credit.text;
+        }
+        
+        targetContainer.appendChild(creditDiv);
+        currentIndex++;
+    }
+    
+    // Add credits every 200ms
+    const creditInterval = setInterval(() => {
+        addCredit();
+        
+        // Stop when all credits are shown
+        if (currentIndex >= CREDITS.length) {
+            clearInterval(creditInterval);
+            console.log('🎬 All credits complete! Game truly ended.');
+        }
+    }, 200);
+    
+    // Auto-scroll credits upward
+    const scrollInterval = setInterval(() => {
+        if (creditsContainer.scrollHeight > 0) {
+            creditsContainer.scrollTop += 3;
+        }
+        if (creditsContainerRight.scrollHeight > 0) {
+            creditsContainerRight.scrollTop += 3;
+        }
+    }, 40);
 }
 
 // Extensive monster credits list (will loop forever)
