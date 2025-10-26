@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elevator Ride</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="jumpscare" id="jumpscare">
+        <img src="Jumpscare1.png" alt="Jumpscare">
+    </div>
+    <div class="jumpscare2" id="jumpscare2">
+        <img src="Jumpscare2.png" alt="Jumpscare 2">
+    </div>
+    <div class="jumpscare3" id="jumpscare3">
+        <img src="Jumpscare3.png" alt="Jumpscare 3">
+    </div>
+    <div class="door-game-container" id="doorGameContainer">
+        <div class="typewriter-text" id="typewriterText"></div>
+        <div class="door-image-container" id="doorImageContainer">
+            <img src="3doorgame.png" alt="Three Doors">
+            <div class="door-zone door-left" id="doorLeft"></div>
+            <div class="door-zone door-middle" id="doorMiddle"></div>
+            <div class="door-zone door-right" id="doorRight"></div>
+        </div>
+    </div>
+    <div class="redlight-game-container" id="redlightGameContainer">
+        <img src="Redlightmap.png" alt="Red Light Game Map" class="redlight-background">
+        <div class="light-indicator" id="lightIndicator">GREEN LIGHT</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <img src="player1.png" alt="Player" class="player-sprite" id="playerSprite">
+    </div>
+    <div class="camera-jumpscare" id="cameraJumpscare">
+        <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+        <canvas id="effectsCanvas" class="effects-canvas"></canvas>
+    </div>
+    <div class="phone-game-container" id="phoneGameContainer">
+        <img src="PhoneBackground.png" alt="Phone Background" class="phone-background">
+        <img src="phone.png" alt="Phone" class="phone-sprite" id="phoneSprite">
+    </div>
+    <div class="background-texture" id="backgroundTexture"></div>
+    <div class="credits-container" id="creditsContainer"></div>
+    <div class="credits-container-right" id="creditsContainerRight"></div>
+    <div class="fade-to-black" id="fadeToBlack"></div>
+    <div class="recording-playback" id="recordingPlayback">
+        <div class="playback-grid">
+            <div class="playback-item">
+                <video id="playbackVideo1" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas1" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">DOOR GAME</div>
+            </div>
+            <div class="playback-item">
+                <video id="playbackVideo2" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas2" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">PHONE CALL</div>
+            </div>
+            <div class="playback-item">
+                <video id="playbackVideo3" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas3" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">SHOOTING</div>
+            </div>
+            <div class="playback-item">
+                <video id="playbackVideo4" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas4" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">BLINK GAME</div>
+            </div>
+            <div class="playback-item">
+                <video id="playbackVideo5" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas5" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">RED LIGHT</div>
+            </div>
+            <div class="playback-item">
+                <video id="playbackVideo6" class="playback-video" autoplay loop muted></video>
+                <canvas id="eyesCanvas6" class="eyes-overlay"></canvas>
+                <div class="playback-label-small">COOKIE</div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="button" id="startButton">start</div>
+        <div class="button hidden" id="playButton">play</div>
+        <div class="button hidden" id="openDoorButton">open elevator door</div>
+        <div class="elevator-container" id="elevatorContainer">
+            <div class="light-circle" id="lightCircle"></div>
+            <img src="Elevator.png" alt="Elevator" class="elevator-image">
+            <img src="ElevatorLight.png" alt="Elevator Light" class="elevator-light-overlay" id="elevatorLightOverlay">
+        </div>
+    </div>
+    
+    <audio id="fillerMusic" loop>
+        <source src="FillerMusic.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <audio id="audioPlayer" loop>
+        <source src="ElevatorRide.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <audio id="screechSound">
+        <source src="elevator_screaching.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="screechSound1">
+        <source src="elevator_screaching-1761419779551.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="screechSound2">
+        <source src="elevator_screaching_%231-1761419779551.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="screechSound3">
+        <source src="elevator_screaching_%232-1761419779552.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="screechSound4">
+        <source src="elevator_screaching_%233-1761419784620.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="clickSound">
+        <source src="light_click_on.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound4">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound5">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2_1">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2_2">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2_3">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2_4">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound2_5">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="gunshotSound">
+        <source src="gunshot.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="horrorMusic" loop>
+        <source src="horrormusic.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3_1">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3_2">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3_3">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3_4">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="jumpscareSound3_5">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="phoneRingSound" loop>
+        <source src="creepy_phone_ring_%233-1761429107422.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="phoneAudio">
+        <source src="PhoneAudio.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="heavyBreathing1" loop>
+        <source src="heavy_breathing-1761428932606.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="heavyBreathing2" loop>
+        <source src="heavy_breathing_%231-1761428932606.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="heavyBreathing3" loop>
+        <source src="heavy_breathing_%233-1761428907348.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="suspenseMusic" loop>
+        <source src="suspense-horror-tension-309914.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="midnightCarouselMusic" loop>
+        <source src="Midnight Carousel.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="blinkScreachSound">
+        <source src="jumpscare_sound2.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="blinkGameMusic" loop>
+        <source src="blinkgame.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="cookieMusic" loop>
+        <source src="cookiemusic.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="redlightMusic" loop>
+        <source src="Redlightgreenlight.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="rpgFireSound">
+        <source src="rpgfire.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="endMusic">
+        <source src="EndMusic.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="glitchSound1">
+        <source src="Glitch1.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="glitchSound2">
+        <source src="Glitch2.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="glitchSound3">
+        <source src="Glitch3.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="glitchSound4">
+        <source src="Glitch4.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="endScaryDialog">
+        <source src="Endscarydialog.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="shooting-gallery-container" id="shootingGalleryContainer">
+        <img src="map.png" alt="Shooting Gallery Background" class="gallery-background">
+        <div class="targets-container" id="targetsContainer"></div>
+        <img src="Gun.png" alt="Gun" class="gun-sprite" id="gunSprite">
+    </div>
+
+    <div class="phone-jumpscare-overlay" id="phoneJumpscareOverlay">
+        <img src="Phonejumpscare.png" alt="Phone Jumpscare">
+    </div>
+
+    <!-- Blink Game Container -->
+    <div class="blink-game-container" id="blinkGameContainer">
+        <img src="blinkgamebackground.png" alt="Dark Hallway" class="blink-background">
+        <img src="blinkmonster.png" alt="Monster" class="blink-monster" id="blinkMonster">
+        <div class="blink-warning" id="blinkWarning">KEEP YOUR EYES OPEN</div>
+        <div class="blink-distance" id="blinkDistance">Distance: 100m</div>
+    </div>
+
+    <!-- Cookie Tracing Game Container -->
+    <div class="cookie-game-container" id="cookieGameContainer">
+        <div class="cookie-timer" id="cookieTimer">60</div>
+        <div class="cookie-instructions" id="cookieInstructions">Trace the cookie!</div>
+        <div class="cookie-progress" id="cookieProgress">0%</div>
+        <canvas id="cookieCanvas" class="cookie-canvas"></canvas>
+    </div>
+
+    <!-- Debug Menu -->
+    <div class="debug-menu" id="debugMenu">
+        <div class="debug-header">
+            <span>DEBUG MENU</span>
+            <button class="debug-close" id="debugClose">✕</button>
+        </div>
+        <div class="debug-content">
+            <div class="debug-section">
+                <h3>🎮 Minigames</h3>
+                <button class="debug-btn" onclick="debugStartDoorGame()">🚪 Door Game</button>
+                <button class="debug-btn" onclick="debugStartRedLight()">🚦 Red Light Green Light</button>
+                <button class="debug-btn" onclick="debugStartPhone()">📞 Phone Game</button>
+                <button class="debug-btn" onclick="debugStartShootingGallery()">🎯 Shooting Gallery</button>
+                <button class="debug-btn debug-btn-highlight" onclick="debugStartBlinkGame()">👁️ Blink Game (Eye Tracking)</button>
+                <button class="debug-btn debug-btn-highlight" onclick="debugStartCookieGame()">🍪 Cookie Tracing Game (NEW!)</button>
+            </div>
+            <div class="debug-section">
+                <h3>📞 Phone Game States</h3>
+                <button class="debug-btn" onclick="debugPhoneWithJumpscare()">Phone + Jumpscare ✓</button>
+                <button class="debug-btn" onclick="debugPhoneNoJumpscare()">Phone (No Jumpscare) ✗</button>
+            </div>
+            <div class="debug-section">
+                <h3>🎯 Target Game States</h3>
+                <button class="debug-btn" onclick="debugTargetForceJumpscare()">Force Target Jumpscare ✓</button>
+                <button class="debug-btn" onclick="debugTargetNeverJumpscare()">Never Jumpscare (Loop) ∞</button>
+            </div>
+            <div class="debug-section">
+                <h3>👁️ Blink Game Options</h3>
+                <button class="debug-btn" onclick="debugBlinkGameSlowMode()">Slow Mode (Easy)</button>
+                <button class="debug-btn" onclick="debugBlinkGameFastMode()">Fast Mode (Hard)</button>
+                <button class="debug-btn" onclick="debugBlinkGameInstantJumpscare()">Instant Jumpscare</button>
+                <div class="debug-info" id="blinkGameInfo">
+                    Sensitivity: <span id="blinkSensitivity">High (0.35)</span><br>
+                    Face Detected: <span id="faceDetected">Initializing...</span><br>
+                    Eye Status: <span id="eyeStatus">Unknown</span><br>
+                    EAR Value: <span id="earValue">-</span><br>
+                    <small>💡 Lower EAR = more closed eyes | Speed: 50m/s</small>
+                </div>
+            </div>
+            <div class="debug-section">
+                <h3>💀 Jumpscares</h3>
+                <button class="debug-btn" onclick="debugTriggerJumpscare1()">Jumpscare 1</button>
+                <button class="debug-btn" onclick="debugTriggerJumpscare2()">Jumpscare 2</button>
+                <button class="debug-btn" onclick="debugTriggerJumpscare3()">Jumpscare 3</button>
+                <button class="debug-btn" onclick="triggerPhoneJumpscare()">Phone Jumpscare</button>
+                <button class="debug-btn" onclick="debugTriggerCameraJumpscare()">Camera Jumpscare</button>
+                <button class="debug-btn" onclick="debugTriggerBlinkJumpscare()">Blink Jumpscare</button>
+            </div>
+            <div class="debug-section">
+                <h3>🎬 Controls</h3>
+                <button class="debug-btn" onclick="debugBackToElevator()">🛗 Back to Elevator</button>
+                <button class="debug-btn" onclick="debugStopAllGames()">⏹️ Stop All Games</button>
+                <button class="debug-btn debug-btn-highlight" onclick="debugSkipToEnding()">🎬 Skip to Ending</button>
+                <button class="debug-btn debug-btn-danger" onclick="debugResetGame()">🔄 Reset Game</button>
+            </div>
+        </div>
+    </div>
+    <button class="debug-toggle" id="debugToggle">DEBUG</button>
+
+    <!-- Load main game script -->
+    <script src="js/main.js"></script>
+</body>
+</html>
