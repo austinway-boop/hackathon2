@@ -397,7 +397,20 @@ async function playbackRecordings() {
         sound.muted = true;
     });
     
-    console.log('✅ All glitch sounds MUTED and STOPPED for playback!');
+    // MUTE ALL JUMPSCARE SOUNDS - they should NOT play during video playback
+    const allJumpscareSounds = [
+        jumpscareSound, jumpscareSound2, jumpscareSound3, jumpscareSound4, jumpscareSound5,
+        jumpscareSound2_1, jumpscareSound2_2, jumpscareSound2_3, jumpscareSound2_4, jumpscareSound2_5,
+        jumpscareSound3_1, jumpscareSound3_2, jumpscareSound3_3, jumpscareSound3_4, jumpscareSound3_5
+    ];
+    allJumpscareSounds.forEach(sound => {
+        sound.pause();
+        sound.currentTime = 0;
+        sound.volume = 0;
+        sound.muted = true;
+    });
+    
+    console.log('✅ All glitch and jumpscare sounds MUTED for playback!');
     
     // Stop suspense music - we want to hear the scary dialog clearly
     suspenseMusic.pause();
@@ -447,6 +460,12 @@ function finalJumpscare() {
     suspenseMusic.pause();
     suspenseMusic.currentTime = 0;
     
+    // UNMUTE jumpscare sounds for the actual jumpscare
+    jumpscareSound2.muted = false;
+    jumpscareSound2.volume = 1.0;
+    jumpscareSound3_1.muted = false;
+    jumpscareSound3_1.volume = 0.8;
+    
     // INTENSE FLASHING EFFECT
     document.body.style.filter = 'brightness(3)';
     setTimeout(() => {
@@ -464,13 +483,11 @@ function finalJumpscare() {
     
     // Play MULTIPLE jumpscare sounds for intensity
     jumpscareSound2.currentTime = 0;
-    jumpscareSound2.volume = 1.0;
     jumpscareSound2.play();
     
     // Layer another sound for extra intensity
     setTimeout(() => {
         jumpscareSound3_1.currentTime = 0;
-        jumpscareSound3_1.volume = 0.8;
         jumpscareSound3_1.play();
     }, 100);
     
@@ -575,40 +592,60 @@ function startFinalCredits() {
         const creditDiv = document.createElement('div');
         creditDiv.className = 'credit-line';
         
-        // Apply type-specific styling (NO glitching/corrupted for proper ending)
+        // Apply type-specific styling
         if (credit.type === 'section') {
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '24px';
+            creditDiv.style.fontSize = '28px';
             creditDiv.style.fontWeight = 'bold';
-            creditDiv.style.marginTop = '40px';
+            creditDiv.style.marginTop = '50px';
+            creditDiv.style.color = '#fff';
         } else if (credit.type === 'role') {
             creditDiv.className = 'credit-line role';
             creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '18px';
+            creditDiv.style.color = '#aaa';
             if (credit.name) {
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'credit-line role';
                 nameDiv.textContent = credit.name;
                 nameDiv.style.fontWeight = 'bold';
+                nameDiv.style.fontSize = '20px';
+                nameDiv.style.color = '#fff';
+                nameDiv.style.marginBottom = '15px';
                 targetContainer.appendChild(creditDiv);
                 targetContainer.appendChild(nameDiv);
                 currentIndex++;
                 return;
             }
         } else if (credit.type === 'monster') {
-            creditDiv.classList.add('monster');
+            creditDiv.className = 'credit-line monster';
             creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '18px';
             if (credit.name) {
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'credit-line monster';
                 nameDiv.textContent = credit.name;
                 nameDiv.style.fontWeight = 'bold';
+                nameDiv.style.fontSize = '20px';
+                nameDiv.style.marginBottom = '15px';
                 targetContainer.appendChild(creditDiv);
                 targetContainer.appendChild(nameDiv);
                 currentIndex++;
                 return;
             }
-        } else {
+        } else if (credit.type === 'glitch') {
+            creditDiv.className = 'credit-line glitch';
             creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '22px';
+        } else if (credit.type === 'corrupted') {
+            creditDiv.className = 'credit-line corrupted';
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '22px';
+        } else {
+            // Normal credit
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '18px';
+            creditDiv.style.color = '#ccc';
         }
         
         targetContainer.appendChild(creditDiv);
