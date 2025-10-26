@@ -26,6 +26,7 @@ const jumpscareSound2_3 = document.getElementById('jumpscareSound2_3');
 const jumpscareSound2_4 = document.getElementById('jumpscareSound2_4');
 const jumpscareSound2_5 = document.getElementById('jumpscareSound2_5');
 const jumpscare3 = document.getElementById('jumpscare3');
+const jumpscare4 = document.getElementById('jumpscare4');
 const jumpscareSound3_1 = document.getElementById('jumpscareSound3_1');
 const jumpscareSound3_2 = document.getElementById('jumpscareSound3_2');
 const jumpscareSound3_3 = document.getElementById('jumpscareSound3_3');
@@ -382,6 +383,134 @@ function stopRecording() {
         mediaRecorder.stop();
         console.log(`📹 Stopped recording ${currentRecordingGame}`);
     }
+}
+
+// Final jumpscare and return to elevator with looping credits
+function finalJumpscare() {
+    console.log('💀 Starting final jumpscare sequence...');
+    
+    // Wait 5 seconds
+    setTimeout(() => {
+        console.log('💀 FINAL JUMPSCARE!');
+        
+        // Remove fade to black
+        fadeToBlack.classList.remove('active');
+        
+        // Show jumpscare 4
+        jumpscare4.classList.add('active');
+        
+        // Play jumpscare sound 2
+        jumpscareSound2.currentTime = 0;
+        jumpscareSound2.volume = 1.0;
+        jumpscareSound2.play();
+        
+        // Hide jumpscare after 1 second and return to elevator
+        setTimeout(() => {
+            jumpscare4.classList.remove('active');
+            
+            // Return to elevator with looping credits
+            returnToElevatorWithLoopingCredits();
+        }, 1000);
+    }, 5000);
+}
+
+// Return to elevator and show looping fake credits
+function returnToElevatorWithLoopingCredits() {
+    console.log('🛗 Returning to elevator with looping credits...');
+    
+    // Stop all sounds
+    endScaryDialog.pause();
+    endScaryDialog.currentTime = 0;
+    
+    // Show elevator again
+    elevatorContainer.style.display = 'block';
+    elevatorContainer.style.top = '50%';
+    elevatorContainer.classList.add('shaking');
+    
+    // Play elevator music on loop
+    audioPlayer.currentTime = 0;
+    audioPlayer.loop = true;
+    audioPlayer.volume = 0.5;
+    audioPlayer.play();
+    console.log('🎵 Playing elevator music on loop');
+    
+    // Show background
+    backgroundTexture.classList.add('visible', 'moving');
+    
+    // Start looping fake credits
+    startLoopingCredits();
+}
+
+// Fake looping credits (just monsters)
+const MONSTER_CREDITS = [
+    { type: 'section', text: '--- MONSTERS ---' },
+    { type: 'monster', text: 'THE WATCHER', name: 'Door Demon' },
+    { type: 'monster', text: 'THE CALLER', name: 'Phone Entity' },
+    { type: 'monster', text: 'THE HUNTER', name: 'Target Phantom' },
+    { type: 'monster', text: 'THE BLINKER', name: 'Hallway Terror' },
+    { type: 'monster', text: 'THE FOLLOWER', name: 'Red Light Beast' },
+    { type: 'monster', text: 'THE SWEET ONE', name: 'Cookie Monster' },
+    { type: 'section', text: '--- THE END ---' },
+    { type: 'normal', text: 'OR IS IT?' },
+    { type: 'section', text: '...' },
+];
+
+function startLoopingCredits() {
+    console.log('🎬 Starting looping credits...');
+    creditsContainer.classList.add('active');
+    creditsContainer.innerHTML = '';
+    
+    let currentIndex = 0;
+    
+    function addCredit() {
+        if (currentIndex >= MONSTER_CREDITS.length) {
+            // Loop back to start
+            currentIndex = 0;
+            creditsContainer.innerHTML = '';
+        }
+        
+        const credit = MONSTER_CREDITS[currentIndex];
+        const creditDiv = document.createElement('div');
+        creditDiv.className = 'credit-line';
+        
+        if (credit.type === 'section') {
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '28px';
+            creditDiv.style.fontWeight = 'bold';
+            creditDiv.style.marginTop = '50px';
+            creditDiv.style.color = '#ff0000';
+        } else if (credit.type === 'monster') {
+            creditDiv.className = 'credit-line monster';
+            creditDiv.textContent = credit.text;
+            if (credit.name) {
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'credit-line monster';
+                nameDiv.textContent = credit.name;
+                nameDiv.style.fontWeight = 'bold';
+                nameDiv.style.fontSize = '20px';
+                creditsContainer.appendChild(creditDiv);
+                creditsContainer.appendChild(nameDiv);
+                currentIndex++;
+                return;
+            }
+        } else {
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '24px';
+        }
+        
+        creditsContainer.appendChild(creditDiv);
+        currentIndex++;
+    }
+    
+    // Add credits every 300ms
+    setInterval(addCredit, 300);
+    
+    // Auto-scroll credits
+    setInterval(() => {
+        if (creditsContainer.scrollHeight > 0) {
+            creditsContainer.scrollTop += 3;
+        }
+    }, 40);
 }
 
 // Play back all recordings simultaneously with red eyes
@@ -2376,8 +2505,8 @@ function startCredits() {
                 endScaryDialog.volume = 0.9;
                 endScaryDialog.play();
             
-            // Show all recordings simultaneously
-            playbackRecordings();
+            // Wait 5 seconds, then show final jumpscare
+            finalJumpscare();
             }, 2000);
     }
     
