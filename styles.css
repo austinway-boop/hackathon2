@@ -251,52 +251,44 @@ body {
 
 /* Game Title Styles */
 .game-title {
-    color: #ff0000;
-    font-size: clamp(32px, 6vw, 56px);
-    font-weight: bold;
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: clamp(24px, 4vw, 36px);
+    font-family: 'Courier New', monospace;
     text-align: center;
-    margin-bottom: 40px;
-    text-shadow: 
-        0 0 20px rgba(255, 0, 0, 0.8),
-        0 0 40px rgba(255, 0, 0, 0.5),
-        2px 2px 4px rgba(0, 0, 0, 0.8);
-    letter-spacing: 3px;
-    position: relative;
-    line-height: 1.5;
+    letter-spacing: 2px;
+    z-index: 100;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
 }
 
 .game-title .strikethrough {
     text-decoration: line-through;
     text-decoration-color: #ff0000;
-    text-decoration-thickness: 3px;
-    opacity: 0.7;
+    text-decoration-thickness: 2px;
+    opacity: 0.8;
     position: relative;
 }
 
 .game-title .correction {
-    display: inline-block;
-    font-size: 0.7em;
-    vertical-align: super;
     color: #00ff00;
-    margin-right: -0.2em;
+    font-size: 0.85em;
+    position: relative;
     text-shadow: 
-        0 0 15px rgba(0, 255, 0, 0.8),
-        0 0 30px rgba(0, 255, 0, 0.5);
-    animation: correctFlicker 3s ease-in-out infinite;
+        0 0 10px rgba(0, 255, 0, 0.8),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    animation: correctFlicker 2s ease-in-out infinite;
 }
 
 @keyframes correctFlicker {
     0%, 100% {
         opacity: 1;
-        text-shadow: 
-            0 0 15px rgba(0, 255, 0, 0.8),
-            0 0 30px rgba(0, 255, 0, 0.5);
     }
     50% {
-        opacity: 0.8;
-        text-shadow: 
-            0 0 10px rgba(0, 255, 0, 0.6),
-            0 0 20px rgba(0, 255, 0, 0.3);
+        opacity: 0.7;
     }
 }
 
