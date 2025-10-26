@@ -687,7 +687,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 10002;
+    z-index: 10001;
     display: none;
     justify-content: center;
     align-items: center;
@@ -706,11 +706,11 @@ body {
     object-fit: contain;
 }
 
-.jumpscare.flashing, .jumpscare2.flashing, .jumpscare3.flashing {
+.jumpscare.flashing, .jumpscare2.flashing, .jumpscare3.flashing, .jumpscare4.flashing {
     animation: flash 0.05s infinite;
 }
 
-.jumpscare.shaking, .jumpscare2.shaking, .jumpscare3.shaking {
+.jumpscare.shaking, .jumpscare2.shaking, .jumpscare3.shaking, .jumpscare4.shaking {
     animation: violentShake 0.05s infinite;
 }
 

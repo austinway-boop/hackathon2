@@ -385,33 +385,76 @@ function stopRecording() {
     }
 }
 
+// Play back all recordings simultaneously
+async function playbackRecordings() {
+    console.log('🎥 Starting playback of all recordings simultaneously...');
+    
+    // ABSOLUTELY FORCE STOP ALL GLITCH SOUNDS - MUTE THEM COMPLETELY
+    glitchSounds.forEach(sound => {
+        sound.pause();
+        sound.currentTime = 0;
+        sound.volume = 0;
+        sound.muted = true;
+    });
+    
+    console.log('✅ All glitch sounds MUTED and STOPPED for playback!');
+    
+    // Play suspense/horror music during playback (the background music from phone game)
+    suspenseMusic.currentTime = 0;
+    suspenseMusic.volume = 0.6;
+    suspenseMusic.loop = true;
+    suspenseMusic.play();
+    console.log('🎵 Playing suspense music during playback');
+    
+    const videos = [playbackVideo1, playbackVideo2, playbackVideo3, playbackVideo4, playbackVideo5, playbackVideo6];
+    const recordingKeys = ['doors', 'phone1', 'shooting', 'blink', 'redlight', 'cookie'];
+    
+    // Show playback overlay
+    recordingPlayback.classList.add('active');
+    
+    // Load all videos
+    videos.forEach((video, index) => {
+        const videoURL = gameRecordings[recordingKeys[index]];
+        if (videoURL) {
+            video.src = videoURL;
+            video.play();
+            console.log(`🎥 Playing ${recordingKeys[index]}`);
+        } else {
+            console.warn(`No recording found for ${recordingKeys[index]}`);
+        }
+    });
+    
+    // After 5 seconds, trigger final jumpscare
+    setTimeout(() => {
+        finalJumpscare();
+    }, 5000);
+}
+
 // Final jumpscare and return to elevator with looping credits
 function finalJumpscare() {
-    console.log('💀 Starting final jumpscare sequence...');
+    console.log('💀 Preparing final jumpscare...');
     
-    // Wait 5 seconds
+    // Hide playback
+    recordingPlayback.classList.remove('active');
+    
+    // Stop suspense music
+    suspenseMusic.pause();
+    suspenseMusic.currentTime = 0;
+    
+    // Show jumpscare 4 immediately
+    jumpscare4.classList.add('active');
+    
+    // Play jumpscare sound 2
+    jumpscareSound2.currentTime = 0;
+    jumpscareSound2.volume = 1.0;
+    jumpscareSound2.play();
+    console.log('💀 FINAL JUMPSCARE 4!');
+    
+    // Hide jumpscare after 1 second and return to elevator
     setTimeout(() => {
-        console.log('💀 FINAL JUMPSCARE!');
-        
-        // Remove fade to black
-        fadeToBlack.classList.remove('active');
-        
-        // Show jumpscare 4
-        jumpscare4.classList.add('active');
-        
-        // Play jumpscare sound 2
-        jumpscareSound2.currentTime = 0;
-        jumpscareSound2.volume = 1.0;
-        jumpscareSound2.play();
-        
-        // Hide jumpscare after 1 second and return to elevator
-        setTimeout(() => {
-            jumpscare4.classList.remove('active');
-            
-            // Return to elevator with looping credits
-            returnToElevatorWithLoopingCredits();
-        }, 1000);
-    }, 5000);
+        jumpscare4.classList.remove('active');
+        returnToElevatorWithLoopingCredits();
+    }, 1000);
 }
 
 // Return to elevator and show looping fake credits
@@ -441,32 +484,61 @@ function returnToElevatorWithLoopingCredits() {
     startLoopingCredits();
 }
 
-// Fake looping credits (just monsters)
+// Extensive monster credits list (will loop forever)
 const MONSTER_CREDITS = [
-    { type: 'section', text: '--- MONSTERS ---' },
+    { type: 'section', text: '--- THE ENTITIES ---' },
     { type: 'monster', text: 'THE WATCHER', name: 'Door Demon' },
+    { type: 'normal', text: 'Watches from the shadows' },
     { type: 'monster', text: 'THE CALLER', name: 'Phone Entity' },
+    { type: 'normal', text: 'Whispers through the line' },
     { type: 'monster', text: 'THE HUNTER', name: 'Target Phantom' },
+    { type: 'normal', text: 'Always aiming for you' },
     { type: 'monster', text: 'THE BLINKER', name: 'Hallway Terror' },
+    { type: 'normal', text: 'Gets closer when you blink' },
     { type: 'monster', text: 'THE FOLLOWER', name: 'Red Light Beast' },
+    { type: 'normal', text: 'Catches you if you move' },
     { type: 'monster', text: 'THE SWEET ONE', name: 'Cookie Monster' },
+    { type: 'normal', text: 'Hungry for your soul' },
+    { type: 'section', text: '--- THE ELEVATOR ---' },
+    { type: 'normal', text: 'Going Down' },
+    { type: 'normal', text: 'Going Down' },
+    { type: 'normal', text: 'Going Down' },
+    { type: 'normal', text: 'Going Down...' },
+    { type: 'section', text: '--- ??? ---' },
+    { type: 'corrupted', text: 'YOU NEVER LEFT' },
+    { type: 'corrupted', text: 'YOU NEVER WILL' },
+    { type: 'normal', text: '...' },
     { type: 'section', text: '--- THE END ---' },
-    { type: 'normal', text: 'OR IS IT?' },
-    { type: 'section', text: '...' },
+    { type: 'glitch', text: 'OR IS IT?' },
+    { type: 'normal', text: 'The elevator never stops' },
+    { type: 'normal', text: 'The games never end' },
+    { type: 'normal', text: 'They are always watching' },
+    { type: 'section', text: '--- THEY KNOW ---' },
+    { type: 'monster', text: 'YOUR NAME' },
+    { type: 'monster', text: 'YOUR FACE' },
+    { type: 'monster', text: 'YOUR FEAR' },
+    { type: 'normal', text: '...' },
+    { type: 'section', text: '--- LOOP FOREVER ---' },
+    { type: 'corrupted', text: 'FOREVER' },
+    { type: 'corrupted', text: 'FOREVER' },
+    { type: 'corrupted', text: 'FOREVER' },
+    { type: 'normal', text: '...' },
 ];
 
+// Looping credits that never end
 function startLoopingCredits() {
-    console.log('🎬 Starting looping credits...');
+    console.log('🎬 Starting looping monster credits...');
     creditsContainer.classList.add('active');
+    creditsContainerRight.classList.remove('active'); // Only use left side
     creditsContainer.innerHTML = '';
     
     let currentIndex = 0;
     
     function addCredit() {
+        // Loop back to start when we reach the end
         if (currentIndex >= MONSTER_CREDITS.length) {
-            // Loop back to start
             currentIndex = 0;
-            creditsContainer.innerHTML = '';
+            // Don't clear - let them stack and scroll infinitely
         }
         
         const credit = MONSTER_CREDITS[currentIndex];
@@ -475,10 +547,11 @@ function startLoopingCredits() {
         
         if (credit.type === 'section') {
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '28px';
+            creditDiv.style.fontSize = '32px';
             creditDiv.style.fontWeight = 'bold';
-            creditDiv.style.marginTop = '50px';
+            creditDiv.style.marginTop = '60px';
             creditDiv.style.color = '#ff0000';
+            creditDiv.style.textShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
         } else if (credit.type === 'monster') {
             creditDiv.className = 'credit-line monster';
             creditDiv.textContent = credit.text;
@@ -487,364 +560,39 @@ function startLoopingCredits() {
                 nameDiv.className = 'credit-line monster';
                 nameDiv.textContent = credit.name;
                 nameDiv.style.fontWeight = 'bold';
-                nameDiv.style.fontSize = '20px';
+                nameDiv.style.fontSize = '24px';
                 creditsContainer.appendChild(creditDiv);
                 creditsContainer.appendChild(nameDiv);
                 currentIndex++;
                 return;
             }
+        } else if (credit.type === 'corrupted') {
+            creditDiv.className = 'credit-line corrupted';
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '28px';
+        } else if (credit.type === 'glitch') {
+            creditDiv.className = 'credit-line glitch';
+            creditDiv.textContent = credit.text;
+            creditDiv.style.fontSize = '26px';
         } else {
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '24px';
+            creditDiv.style.fontSize = '20px';
+            creditDiv.style.color = '#999';
         }
         
         creditsContainer.appendChild(creditDiv);
         currentIndex++;
     }
     
-    // Add credits every 300ms
-    setInterval(addCredit, 300);
+    // Add credits every 400ms
+    setInterval(addCredit, 400);
     
-    // Auto-scroll credits
+    // Auto-scroll credits smoothly
     setInterval(() => {
         if (creditsContainer.scrollHeight > 0) {
-            creditsContainer.scrollTop += 3;
+            creditsContainer.scrollTop += 2;
         }
-    }, 40);
-}
-
-// Play back all recordings simultaneously with red eyes
-async function playbackRecordings() {
-    console.log('🎥 Starting playback of all recordings simultaneously...');
-    
-    // ABSOLUTELY FORCE STOP ALL GLITCH SOUNDS - MUTE THEM COMPLETELY
-    glitchSounds.forEach(sound => {
-        sound.pause();
-        sound.currentTime = 0;
-        sound.volume = 0;
-        sound.muted = true;
-    });
-    
-    console.log('✅ All glitch sounds MUTED and STOPPED for playback!');
-    
-    // Play suspense/horror music during playback (the background music from phone game)
-    suspenseMusic.currentTime = 0;
-    suspenseMusic.volume = 0.6;
-    suspenseMusic.loop = true;
-    suspenseMusic.play();
-    console.log('🎵 Playing suspense music during playback');
-    
-    const videos = [playbackVideo1, playbackVideo2, playbackVideo3, playbackVideo4, playbackVideo5, playbackVideo6];
-    const canvases = [eyesCanvas1, eyesCanvas2, eyesCanvas3, eyesCanvas4, eyesCanvas5, eyesCanvas6];
-    const recordingKeys = ['doors', 'phone1', 'shooting', 'blink', 'redlight', 'cookie'];
-    
-    // Show playback overlay
-    recordingPlayback.classList.add('active');
-    
-    // Randomly pick which video gets red eyes (switch every 5 seconds)
-    let currentEyesVideoIndex = Math.floor(Math.random() * 6);
-    
-    // Load all videos
-    videos.forEach((video, index) => {
-        const videoURL = gameRecordings[recordingKeys[index]];
-        if (videoURL) {
-            video.src = videoURL;
-            video.play();
-            console.log(`🎥 Playing ${recordingKeys[index]}`);
-            
-            // Setup canvas for this video
-            const canvas = canvases[index];
-            const ctx = canvas.getContext('2d');
-            
-            video.onloadedmetadata = () => {
-                // Match canvas dimensions to video
-                const rect = video.getBoundingClientRect();
-                canvas.width = video.videoWidth || rect.width;
-                canvas.height = video.videoHeight || rect.height;
-                canvas.style.width = rect.width + 'px';
-                canvas.style.height = rect.height + 'px';
-                console.log(`📐 Canvas ${index} sized: ${canvas.width}x${canvas.height} display: ${rect.width}x${rect.height}`);
-                
-                // Start drawing red eyes on the selected video after metadata is loaded
-                if (index === currentEyesVideoIndex) {
-                    console.log(`👁️ Starting red eyes on video ${index}`);
-                    drawRedEyesOnVideo(video, canvas, ctx, index);
-                }
-            };
-            
-            // Also try to start immediately if video is ready
-            if (index === currentEyesVideoIndex && video.readyState >= 1) {
-                const rect = video.getBoundingClientRect();
-                if (video.videoWidth && video.videoHeight) {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    canvas.style.width = rect.width + 'px';
-                    canvas.style.height = rect.height + 'px';
-                }
-                console.log(`👁️ Starting red eyes immediately on video ${index}`);
-                drawRedEyesOnVideo(video, canvas, ctx, index);
-            }
-        } else {
-            console.warn(`No recording found for ${recordingKeys[index]}`);
-        }
-    });
-    
-    // Switch which video has red eyes every 4-7 seconds (random timing!)
-    function scheduleNextEyeSwitch() {
-        const switchDelay = 4000 + Math.random() * 3000;
-        const timeout = setTimeout(() => {
-            if (!recordingPlayback.classList.contains('active')) {
-                return; // Stop if playback ended
-            }
-            
-            const newIndex = Math.floor(Math.random() * 6);
-            if (newIndex !== currentEyesVideoIndex) {
-                console.log(`👁️ Switching red eyes from video ${currentEyesVideoIndex} to video ${newIndex}`);
-                
-                // Clear old canvas
-                const oldCanvas = canvases[currentEyesVideoIndex];
-                if (oldCanvas) {
-                    const oldCtx = oldCanvas.getContext('2d');
-                    oldCtx.clearRect(0, 0, oldCanvas.width, oldCanvas.height);
-                }
-                
-                // Start drawing on new video
-                currentEyesVideoIndex = newIndex;
-                const video = videos[newIndex];
-                const canvas = canvases[newIndex];
-                const ctx = canvas.getContext('2d');
-                
-                if (video && video.src && canvas) {
-                    // Ensure canvas is sized properly
-                    const rect = video.getBoundingClientRect();
-                    if (video.videoWidth && video.videoHeight) {
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                    } else if (rect.width && rect.height) {
-                        canvas.width = rect.width;
-                        canvas.height = rect.height;
-                    }
-                    canvas.style.width = rect.width + 'px';
-                    canvas.style.height = rect.height + 'px';
-                    
-                    console.log(`📐 Resized canvas ${newIndex}: ${canvas.width}x${canvas.height}`);
-                    drawRedEyesOnVideo(video, canvas, ctx, newIndex);
-                }
-            }
-            
-            // Schedule next switch
-            scheduleNextEyeSwitch();
-        }, switchDelay);
-        
-        jumpscareTimeouts.push(timeout);
-    }
-    
-    scheduleNextEyeSwitch();
-}
-
-// Draw animated red eyes on canvas overlay using face detection
-function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
-    let eyeGlowIntensity = 0;
-    let eyeGlowDirection = 1;
-    let detectedFace = null;
-    let animationFrameId = null;
-    let detectionRunning = false;
-    
-    // Create a dedicated FaceMesh instance for this video
-    let videoFaceMesh = null;
-    
-    // Initialize face detection for this specific video
-    async function initVideoFaceDetection() {
-        try {
-            // Create new FaceMesh instance for recorded video
-            videoFaceMesh = new FaceMesh({
-                locateFile: (file) => {
-                    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-                }
-            });
-            
-            videoFaceMesh.setOptions({
-                maxNumFaces: 1,
-                refineLandmarks: false,
-                minDetectionConfidence: 0.3, // Lower threshold for recorded video
-                minTrackingConfidence: 0.3
-            });
-            
-            videoFaceMesh.onResults((results) => {
-                if (results && results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                    const landmarks = results.multiFaceLandmarks[0];
-                    
-                    // Use the ACTUAL eye center landmarks for precise positioning
-                    // Left eye iris center: 468 (or use 473 for pupil approximation)
-                    // Right eye iris center: 473 (or use 468)
-                    // Fallback to geometric centers: 159 (left lower), 386 (right lower)
-                    
-                    // Left eye - average of key points around the iris
-                    const leftEyeTop = landmarks[159];      // Lower center
-                    const leftEyeBottom = landmarks[145];   // Upper center  
-                    const leftEyeLeft = landmarks[133];     // Outer corner
-                    const leftEyeRight = landmarks[33];     // Inner corner
-                    
-                    // Right eye - average of key points around the iris
-                    const rightEyeTop = landmarks[386];     // Lower center
-                    const rightEyeBottom = landmarks[374];  // Upper center
-                    const rightEyeLeft = landmarks[263];    // Inner corner
-                    const rightEyeRight = landmarks[362];   // Outer corner
-                    
-                    // Calculate CENTER of each eye (average of 4 key points)
-                    const leftEyeX = ((leftEyeTop.x + leftEyeBottom.x + leftEyeLeft.x + leftEyeRight.x) / 4) * canvas.width;
-                    const leftEyeY = ((leftEyeTop.y + leftEyeBottom.y + leftEyeLeft.y + leftEyeRight.y) / 4) * canvas.height;
-                    
-                    const rightEyeX = ((rightEyeTop.x + rightEyeBottom.x + rightEyeLeft.x + rightEyeRight.x) / 4) * canvas.width;
-                    const rightEyeY = ((rightEyeTop.y + rightEyeBottom.y + rightEyeLeft.y + rightEyeRight.y) / 4) * canvas.height;
-                    
-                    // Calculate eye size based on the actual eye width
-                    const leftEyeWidth = Math.abs(leftEyeLeft.x - leftEyeRight.x) * canvas.width;
-                    const rightEyeWidth = Math.abs(rightEyeRight.x - rightEyeLeft.x) * canvas.width;
-                    const avgEyeWidth = (leftEyeWidth + rightEyeWidth) / 2;
-                    
-                    detectedFace = {
-                        leftEye: { x: leftEyeX, y: leftEyeY },
-                        rightEye: { x: rightEyeX, y: rightEyeY },
-                        eyeWidth: avgEyeWidth
-                    };
-                    console.log(`👁️✅ TRACKING eyes in video ${videoIndex} - Left: (${Math.round(leftEyeX)}, ${Math.round(leftEyeY)}) Right: (${Math.round(rightEyeX)}, ${Math.round(rightEyeY)})`);
-                }
-                detectionRunning = false;
-            });
-            
-            console.log(`🎥 Initialized face detection for video ${videoIndex}`);
-        } catch (error) {
-            console.error(`❌ Failed to initialize face detection for video ${videoIndex}:`, error);
-        }
-    }
-    
-    // Continuously detect face in video frames
-    async function detectFaceInVideo() {
-        if (!recordingPlayback.classList.contains('active') || !videoFaceMesh) {
-            return;
-        }
-        
-        if (video.readyState >= 2 && !detectionRunning) {
-            try {
-                detectionRunning = true;
-                await videoFaceMesh.send({ image: video });
-            } catch (error) {
-                console.log(`⚠️ Detection error for video ${videoIndex}:`, error.message);
-                detectionRunning = false;
-            }
-        }
-        
-        // Run detection continuously (every frame for smooth tracking)
-        if (recordingPlayback.classList.contains('active')) {
-            requestAnimationFrame(detectFaceInVideo);
-        }
-    }
-    
-    // Initialize and start detection
-    initVideoFaceDetection().then(() => {
-        detectFaceInVideo();
-    });
-    
-    function animateEyes() {
-        if (!recordingPlayback.classList.contains('active')) {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-            return; // Stop if playback ends
-        }
-        
-        // Ensure canvas is properly sized
-        if (canvas.width === 0 || canvas.height === 0) {
-            if (video.videoWidth && video.videoHeight) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const rect = video.getBoundingClientRect();
-                canvas.style.width = rect.width + 'px';
-                canvas.style.height = rect.height + 'px';
-            }
-        }
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // INTENSE pulsing glow (more dramatic and scary)
-        eyeGlowIntensity += eyeGlowDirection * 0.03;
-        if (eyeGlowIntensity >= 1.2) eyeGlowDirection = -1; // Brighter max
-        if (eyeGlowIntensity <= 0.6) eyeGlowDirection = 1; // Never gets too dim
-        
-        let leftEyeX, leftEyeY, rightEyeX, rightEyeY, eyeSize;
-        
-        if (detectedFace) {
-            // Use TRACKED face positions - this is the real-time eye tracking!
-            leftEyeX = detectedFace.leftEye.x;
-            leftEyeY = detectedFace.leftEye.y;
-            rightEyeX = detectedFace.rightEye.x;
-            rightEyeY = detectedFace.rightEye.y;
-            // Make eyes BIGGER and more prominent - cover the entire eye area
-            eyeSize = detectedFace.eyeWidth ? detectedFace.eyeWidth * 1.2 : Math.abs(rightEyeX - leftEyeX) / 6;
-            eyeSize = Math.max(eyeSize, 15); // Larger minimum size for more intensity
-        } else {
-            // Don't draw anything if face not detected yet - wait for detection
-            animationFrameId = requestAnimationFrame(animateEyes);
-            return;
-        }
-        
-        // Draw two glowing red eyes
-        drawGlowingEye(ctx, leftEyeX, leftEyeY, eyeSize, eyeGlowIntensity);
-        drawGlowingEye(ctx, rightEyeX, rightEyeY, eyeSize, eyeGlowIntensity);
-        
-        animationFrameId = requestAnimationFrame(animateEyes);
-    }
-    
-    animateEyes();
-}
-
-function drawGlowingEye(ctx, x, y, size, intensity) {
-    // Make eyes MUCH bigger and more DEMONIC
-    const largeSize = size * 2;
-    
-    // MASSIVE outer glow (hellfire red)
-    const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, largeSize * 5);
-    outerGlow.addColorStop(0, `rgba(255, 0, 0, ${intensity})`);
-    outerGlow.addColorStop(0.2, `rgba(255, 0, 0, ${intensity * 0.9})`);
-    outerGlow.addColorStop(0.4, `rgba(200, 0, 0, ${intensity * 0.7})`);
-    outerGlow.addColorStop(0.7, `rgba(150, 0, 0, ${intensity * 0.4})`);
-    outerGlow.addColorStop(1, 'rgba(100, 0, 0, 0)');
-    
-    ctx.fillStyle = outerGlow;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // INTENSE red middle layer (blood red)
-    ctx.fillStyle = `rgba(200, 0, 0, ${intensity})`;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 1.3, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // DEEP red core
-    ctx.fillStyle = `rgba(180, 0, 0, ${Math.min(1, intensity * 1.2)})`;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.9, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // BRIGHT burning center (demon eye core)
-    ctx.fillStyle = `rgba(255, 20, 0, ${Math.min(1, intensity * 1.3)})`;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // INTENSE white-hot center pupil (demonic)
-    ctx.fillStyle = `rgba(255, 100, 100, ${Math.min(1, intensity * 1.5)})`;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.25, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // PURE demonic white core
-    ctx.fillStyle = `rgba(255, 200, 200, ${Math.min(1, intensity * 2)})`;
-    ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.1, 0, Math.PI * 2);
-    ctx.fill();
+    }, 30);
 }
 
 // Shooting Gallery game variables
@@ -2505,8 +2253,8 @@ function startCredits() {
                 endScaryDialog.volume = 0.9;
                 endScaryDialog.play();
             
-            // Wait 5 seconds, then show final jumpscare
-            finalJumpscare();
+            // Show all recordings simultaneously
+            playbackRecordings();
             }, 2000);
     }
     
