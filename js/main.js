@@ -545,31 +545,39 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
                 if (results && results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                     const landmarks = results.multiFaceLandmarks[0];
                     
-                    // Use multiple eye landmarks for better accuracy
-                    // Left eye: 33 (center), 133 (outer), 159 (lower), 145 (upper)
-                    // Right eye: 263 (center), 362 (outer), 386 (lower), 374 (upper)
-                    const leftEyeCenter = landmarks[159];
-                    const leftEyeOuter = landmarks[133];
-                    const leftEyeInner = landmarks[33];
+                    // Use the ACTUAL eye center landmarks for precise positioning
+                    // Left eye iris center: 468 (or use 473 for pupil approximation)
+                    // Right eye iris center: 473 (or use 468)
+                    // Fallback to geometric centers: 159 (left lower), 386 (right lower)
                     
-                    const rightEyeCenter = landmarks[386];
-                    const rightEyeOuter = landmarks[362];
-                    const rightEyeInner = landmarks[263];
+                    // Left eye - average of key points around the iris
+                    const leftEyeTop = landmarks[159];      // Lower center
+                    const leftEyeBottom = landmarks[145];   // Upper center  
+                    const leftEyeLeft = landmarks[133];     // Outer corner
+                    const leftEyeRight = landmarks[33];     // Inner corner
                     
-                    // Calculate average position for better accuracy
-                    const leftEyeX = ((leftEyeCenter.x + leftEyeInner.x + leftEyeOuter.x) / 3) * canvas.width;
-                    const leftEyeY = ((leftEyeCenter.y + leftEyeInner.y + leftEyeOuter.y) / 3) * canvas.height;
+                    // Right eye - average of key points around the iris
+                    const rightEyeTop = landmarks[386];     // Lower center
+                    const rightEyeBottom = landmarks[374];  // Upper center
+                    const rightEyeLeft = landmarks[263];    // Inner corner
+                    const rightEyeRight = landmarks[362];   // Outer corner
                     
-                    const rightEyeX = ((rightEyeCenter.x + rightEyeInner.x + rightEyeOuter.x) / 3) * canvas.width;
-                    const rightEyeY = ((rightEyeCenter.y + rightEyeInner.y + rightEyeOuter.y) / 3) * canvas.height;
+                    // Calculate CENTER of each eye (average of 4 key points)
+                    const leftEyeX = ((leftEyeTop.x + leftEyeBottom.x + leftEyeLeft.x + leftEyeRight.x) / 4) * canvas.width;
+                    const leftEyeY = ((leftEyeTop.y + leftEyeBottom.y + leftEyeLeft.y + leftEyeRight.y) / 4) * canvas.height;
                     
-                    // Calculate eye size based on distance between eye landmarks
-                    const eyeWidth = Math.abs(leftEyeOuter.x - leftEyeInner.x) * canvas.width;
+                    const rightEyeX = ((rightEyeTop.x + rightEyeBottom.x + rightEyeLeft.x + rightEyeRight.x) / 4) * canvas.width;
+                    const rightEyeY = ((rightEyeTop.y + rightEyeBottom.y + rightEyeLeft.y + rightEyeRight.y) / 4) * canvas.height;
+                    
+                    // Calculate eye size based on the actual eye width
+                    const leftEyeWidth = Math.abs(leftEyeLeft.x - leftEyeRight.x) * canvas.width;
+                    const rightEyeWidth = Math.abs(rightEyeRight.x - rightEyeLeft.x) * canvas.width;
+                    const avgEyeWidth = (leftEyeWidth + rightEyeWidth) / 2;
                     
                     detectedFace = {
                         leftEye: { x: leftEyeX, y: leftEyeY },
                         rightEye: { x: rightEyeX, y: rightEyeY },
-                        eyeWidth: eyeWidth
+                        eyeWidth: avgEyeWidth
                     };
                     console.log(`👁️✅ TRACKING eyes in video ${videoIndex} - Left: (${Math.round(leftEyeX)}, ${Math.round(leftEyeY)}) Right: (${Math.round(rightEyeX)}, ${Math.round(rightEyeY)})`);
                 }
@@ -630,10 +638,10 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Pulsing glow intensity
-        eyeGlowIntensity += eyeGlowDirection * 0.02;
-        if (eyeGlowIntensity >= 1) eyeGlowDirection = -1;
-        if (eyeGlowIntensity <= 0.3) eyeGlowDirection = 1;
+        // INTENSE pulsing glow (more dramatic and scary)
+        eyeGlowIntensity += eyeGlowDirection * 0.03;
+        if (eyeGlowIntensity >= 1.2) eyeGlowDirection = -1; // Brighter max
+        if (eyeGlowIntensity <= 0.6) eyeGlowDirection = 1; // Never gets too dim
         
         let leftEyeX, leftEyeY, rightEyeX, rightEyeY, eyeSize;
         
@@ -643,9 +651,9 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
             leftEyeY = detectedFace.leftEye.y;
             rightEyeX = detectedFace.rightEye.x;
             rightEyeY = detectedFace.rightEye.y;
-            // Use the calculated eye width for more accurate sizing
-            eyeSize = detectedFace.eyeWidth ? detectedFace.eyeWidth * 0.8 : Math.abs(rightEyeX - leftEyeX) / 6;
-            eyeSize = Math.max(eyeSize, 10); // Ensure minimum size
+            // Make eyes BIGGER and more prominent - cover the entire eye area
+            eyeSize = detectedFace.eyeWidth ? detectedFace.eyeWidth * 1.2 : Math.abs(rightEyeX - leftEyeX) / 6;
+            eyeSize = Math.max(eyeSize, 15); // Larger minimum size for more intensity
         } else {
             // Don't draw anything if face not detected yet - wait for detection
             animationFrameId = requestAnimationFrame(animateEyes);
@@ -663,37 +671,50 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
 }
 
 function drawGlowingEye(ctx, x, y, size, intensity) {
-    // Make eyes bigger and more visible
-    const largeSize = size * 1.5;
+    // Make eyes MUCH bigger and more DEMONIC
+    const largeSize = size * 2;
     
-    // Outer glow (very large)
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, largeSize * 4);
-    gradient.addColorStop(0, `rgba(255, 0, 0, ${intensity * 0.9})`);
-    gradient.addColorStop(0.3, `rgba(255, 0, 0, ${intensity * 0.6})`);
-    gradient.addColorStop(0.6, `rgba(255, 0, 0, ${intensity * 0.3})`);
-    gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+    // MASSIVE outer glow (hellfire red)
+    const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, largeSize * 5);
+    outerGlow.addColorStop(0, `rgba(255, 0, 0, ${intensity})`);
+    outerGlow.addColorStop(0.2, `rgba(255, 0, 0, ${intensity * 0.9})`);
+    outerGlow.addColorStop(0.4, `rgba(200, 0, 0, ${intensity * 0.7})`);
+    outerGlow.addColorStop(0.7, `rgba(150, 0, 0, ${intensity * 0.4})`);
+    outerGlow.addColorStop(1, 'rgba(100, 0, 0, 0)');
     
-    ctx.fillStyle = gradient;
+    ctx.fillStyle = outerGlow;
     ctx.beginPath();
-    ctx.arc(x, y, largeSize * 4, 0, Math.PI * 2);
+    ctx.arc(x, y, largeSize * 5, 0, Math.PI * 2);
     ctx.fill();
     
-    // Middle glow
-    ctx.fillStyle = `rgba(255, 30, 30, ${intensity * 0.9})`;
+    // INTENSE red middle layer (blood red)
+    ctx.fillStyle = `rgba(200, 0, 0, ${intensity})`;
     ctx.beginPath();
-    ctx.arc(x, y, largeSize, 0, Math.PI * 2);
+    ctx.arc(x, y, largeSize * 1.3, 0, Math.PI * 2);
     ctx.fill();
     
-    // Inner bright core
-    ctx.fillStyle = `rgba(255, 80, 80, ${intensity})`;
+    // DEEP red core
+    ctx.fillStyle = `rgba(180, 0, 0, ${Math.min(1, intensity * 1.2)})`;
     ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.6, 0, Math.PI * 2);
+    ctx.arc(x, y, largeSize * 0.9, 0, Math.PI * 2);
     ctx.fill();
     
-    // Bright center (pupil)
-    ctx.fillStyle = `rgba(255, 150, 150, ${Math.min(1, intensity * 1.5)})`;
+    // BRIGHT burning center (demon eye core)
+    ctx.fillStyle = `rgba(255, 20, 0, ${Math.min(1, intensity * 1.3)})`;
     ctx.beginPath();
-    ctx.arc(x, y, largeSize * 0.3, 0, Math.PI * 2);
+    ctx.arc(x, y, largeSize * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // INTENSE white-hot center pupil (demonic)
+    ctx.fillStyle = `rgba(255, 100, 100, ${Math.min(1, intensity * 1.5)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, largeSize * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // PURE demonic white core
+    ctx.fillStyle = `rgba(255, 200, 200, ${Math.min(1, intensity * 2)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, largeSize * 0.1, 0, Math.PI * 2);
     ctx.fill();
 }
 
