@@ -399,12 +399,9 @@ async function playbackRecordings() {
     
     console.log('✅ All glitch sounds MUTED and STOPPED for playback!');
     
-    // Play suspense/horror music during playback (the background music from phone game)
+    // Stop suspense music - we want to hear the scary dialog clearly
+    suspenseMusic.pause();
     suspenseMusic.currentTime = 0;
-    suspenseMusic.volume = 0.6;
-    suspenseMusic.loop = true;
-    suspenseMusic.play();
-    console.log('🎵 Playing suspense music during playback');
     
     const videos = [playbackVideo1, playbackVideo2, playbackVideo3, playbackVideo4, playbackVideo5, playbackVideo6];
     const recordingKeys = ['doors', 'phone1', 'shooting', 'blink', 'redlight', 'cookie'];
@@ -424,10 +421,19 @@ async function playbackRecordings() {
         }
     });
     
-    // After 5 seconds, trigger final jumpscare
-    setTimeout(() => {
+    // Play the scary dialog audio
+    endScaryDialog.currentTime = 0;
+    endScaryDialog.volume = 0.9;
+    endScaryDialog.play();
+    console.log('👹 Playing end scary dialog...');
+    
+    // Wait for scary dialog to finish, THEN trigger jumpscare
+    endScaryDialog.addEventListener('ended', function onDialogEnd() {
+        console.log('👹 Scary dialog finished! Triggering jumpscare...');
         finalJumpscare();
-    }, 5000);
+        // Remove the listener so it doesn't trigger multiple times
+        endScaryDialog.removeEventListener('ended', onDialogEnd);
+    });
 }
 
 // Final jumpscare and return to elevator with looping credits
