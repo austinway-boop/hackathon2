@@ -527,12 +527,12 @@ function startElevatorRisingWithFinalCredits() {
         }
     }, 50);
     
-    // Play END MUSIC (the proper ending music)
-    endMusic.currentTime = 0;
-    endMusic.volume = 0.7;
-    endMusic.loop = false; // Play once, not looping
-    endMusic.play();
-    console.log('🎵 Playing end music');
+    // Play elevator music during credits
+    audioPlayer.currentTime = 0;
+    audioPlayer.volume = 0.5;
+    audioPlayer.loop = true; // Loop the elevator music
+    audioPlayer.play();
+    console.log('🎵 Playing elevator music during final credits');
     
     // Show background moving UP
     backgroundTexture.classList.add('visible', 'moving');
