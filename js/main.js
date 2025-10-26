@@ -430,15 +430,29 @@ async function playbackRecordings() {
             video.onloadedmetadata = () => {
                 // Match canvas dimensions to video
                 const rect = video.getBoundingClientRect();
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth || rect.width;
+                canvas.height = video.videoHeight || rect.height;
                 canvas.style.width = rect.width + 'px';
                 canvas.style.height = rect.height + 'px';
                 console.log(`📐 Canvas ${index} sized: ${canvas.width}x${canvas.height} display: ${rect.width}x${rect.height}`);
+                
+                // Start drawing red eyes on the selected video after metadata is loaded
+                if (index === currentEyesVideoIndex) {
+                    console.log(`👁️ Starting red eyes on video ${index}`);
+                    drawRedEyesOnVideo(video, canvas, ctx, index);
+                }
             };
             
-            // Start drawing red eyes on the selected video
-            if (index === currentEyesVideoIndex) {
+            // Also try to start immediately if video is ready
+            if (index === currentEyesVideoIndex && video.readyState >= 1) {
+                const rect = video.getBoundingClientRect();
+                if (video.videoWidth && video.videoHeight) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.style.width = rect.width + 'px';
+                    canvas.style.height = rect.height + 'px';
+                }
+                console.log(`👁️ Starting red eyes immediately on video ${index}`);
                 drawRedEyesOnVideo(video, canvas, ctx, index);
             }
         } else {
@@ -450,8 +464,12 @@ async function playbackRecordings() {
     function scheduleNextEyeSwitch() {
         const switchDelay = 4000 + Math.random() * 3000;
         const timeout = setTimeout(() => {
+            if (!recordingPlayback.classList.contains('active')) {
+                return; // Stop if playback ended
+            }
+            
             const newIndex = Math.floor(Math.random() * 6);
-            if (newIndex !== currentEyesVideoIndex && recordingPlayback.classList.contains('active')) {
+            if (newIndex !== currentEyesVideoIndex) {
                 console.log(`👁️ Switching red eyes from video ${currentEyesVideoIndex} to video ${newIndex}`);
                 
                 // Clear old canvas
@@ -467,14 +485,20 @@ async function playbackRecordings() {
                 const canvas = canvases[newIndex];
                 const ctx = canvas.getContext('2d');
                 
-                if (video && video.src && video.readyState >= 2 && canvas) {
-                    // Ensure canvas is sized
+                if (video && video.src && canvas) {
+                    // Ensure canvas is sized properly
                     const rect = video.getBoundingClientRect();
-                    canvas.width = video.videoWidth || rect.width;
-                    canvas.height = video.videoHeight || rect.height;
+                    if (video.videoWidth && video.videoHeight) {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                    } else if (rect.width && rect.height) {
+                        canvas.width = rect.width;
+                        canvas.height = rect.height;
+                    }
                     canvas.style.width = rect.width + 'px';
                     canvas.style.height = rect.height + 'px';
                     
+                    console.log(`📐 Resized canvas ${newIndex}: ${canvas.width}x${canvas.height}`);
                     drawRedEyesOnVideo(video, canvas, ctx, newIndex);
                 }
             }
@@ -494,36 +518,61 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
     let eyeGlowIntensity = 0;
     let eyeGlowDirection = 1;
     let detectedFace = null;
+    let animationFrameId = null;
     
-    // Try to detect face using FaceMesh if available
+    // Try to detect face using FaceMesh detector if available
     async function detectFaceInVideo() {
-        if (faceMesh && video.readyState >= 2) {
+        if (faceMeshDetector && video.readyState >= 2 && recordingPlayback.classList.contains('active')) {
             try {
-                const results = await faceMesh.send({ image: video });
+                // Create a temporary canvas to capture video frame
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = video.videoWidth;
+                tempCanvas.height = video.videoHeight;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.drawImage(video, 0, 0);
+                
+                const results = await faceMeshDetector.send({ image: tempCanvas });
                 if (results && results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                     const landmarks = results.multiFaceLandmarks[0];
-                    // Get eye positions (landmarks 33 and 263 are left and right eye centers)
-                    const leftEye = landmarks[33];
-                    const rightEye = landmarks[263];
+                    
+                    // Use multiple eye landmarks for better accuracy
+                    // Left eye: 33 (center), 133 (outer), 159 (lower), 145 (upper)
+                    // Right eye: 263 (center), 362 (outer), 386 (lower), 374 (upper)
+                    const leftEyeCenter = landmarks[159]; // Lower center of left eye
+                    const leftEyeOuter = landmarks[133];
+                    const leftEyeInner = landmarks[33];
+                    
+                    const rightEyeCenter = landmarks[386]; // Lower center of right eye
+                    const rightEyeOuter = landmarks[362];
+                    const rightEyeInner = landmarks[263];
+                    
+                    // Calculate average position for better accuracy
+                    const leftEyeX = ((leftEyeCenter.x + leftEyeInner.x + leftEyeOuter.x) / 3) * canvas.width;
+                    const leftEyeY = ((leftEyeCenter.y + leftEyeInner.y + leftEyeOuter.y) / 3) * canvas.height;
+                    
+                    const rightEyeX = ((rightEyeCenter.x + rightEyeInner.x + rightEyeOuter.x) / 3) * canvas.width;
+                    const rightEyeY = ((rightEyeCenter.y + rightEyeInner.y + rightEyeOuter.y) / 3) * canvas.height;
+                    
+                    // Calculate eye size based on distance between eye landmarks
+                    const eyeWidth = Math.abs(leftEyeOuter.x - leftEyeInner.x) * canvas.width;
                     
                     detectedFace = {
-                        leftEye: {
-                            x: leftEye.x * canvas.width,
-                            y: leftEye.y * canvas.height
-                        },
-                        rightEye: {
-                            x: rightEye.x * canvas.width,
-                            y: rightEye.y * canvas.height
-                        }
+                        leftEye: { x: leftEyeX, y: leftEyeY },
+                        rightEye: { x: rightEyeX, y: rightEyeY },
+                        eyeWidth: eyeWidth
                     };
+                    console.log(`👁️ Face detected in video ${videoIndex} - Eyes at (${Math.round(leftEyeX)}, ${Math.round(leftEyeY)}) and (${Math.round(rightEyeX)}, ${Math.round(rightEyeY)})`);
                 }
             } catch (error) {
                 // Face detection failed, use default positions
+                console.log(`⚠️ Face detection failed for video ${videoIndex}, using fallback`, error.message);
             }
         }
         
         // Retry face detection every 2 seconds
-        setTimeout(detectFaceInVideo, 2000);
+        if (recordingPlayback.classList.contains('active')) {
+            setTimeout(detectFaceInVideo, 2000);
+        }
     }
     
     // Start face detection
@@ -531,7 +580,21 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
     
     function animateEyes() {
         if (!recordingPlayback.classList.contains('active')) {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
             return; // Stop if playback ends
+        }
+        
+        // Ensure canvas is properly sized
+        if (canvas.width === 0 || canvas.height === 0) {
+            if (video.videoWidth && video.videoHeight) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const rect = video.getBoundingClientRect();
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+            }
         }
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -544,18 +607,20 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
         let leftEyeX, leftEyeY, rightEyeX, rightEyeY, eyeSize;
         
         if (detectedFace) {
-            // Use detected face positions
+            // Use detected face positions with improved sizing
             leftEyeX = detectedFace.leftEye.x;
             leftEyeY = detectedFace.leftEye.y;
             rightEyeX = detectedFace.rightEye.x;
             rightEyeY = detectedFace.rightEye.y;
-            eyeSize = Math.abs(rightEyeX - leftEyeX) / 6; // Size based on eye distance
+            // Use the calculated eye width for more accurate sizing
+            eyeSize = detectedFace.eyeWidth ? detectedFace.eyeWidth * 0.8 : Math.abs(rightEyeX - leftEyeX) / 6;
+            eyeSize = Math.max(eyeSize, 10); // Ensure minimum size
         } else {
-            // Fallback to estimated positions
+            // Fallback to estimated positions - make eyes more visible
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2.5; // Slightly higher than center
             const eyeSpacing = canvas.width / 6;
-            eyeSize = canvas.width / 25;
+            eyeSize = Math.max(canvas.width / 20, 15); // Ensure minimum size
             
             leftEyeX = centerX - eyeSpacing;
             leftEyeY = centerY;
@@ -567,7 +632,7 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
         drawGlowingEye(ctx, leftEyeX, leftEyeY, eyeSize, eyeGlowIntensity);
         drawGlowingEye(ctx, rightEyeX, rightEyeY, eyeSize, eyeGlowIntensity);
         
-        requestAnimationFrame(animateEyes);
+        animationFrameId = requestAnimationFrame(animateEyes);
     }
     
     animateEyes();
@@ -3921,10 +3986,68 @@ setInterval(function() {
 }, 500);
 
 // Skip to ending sequence
-function debugSkipToEnding() {
-    console.log('🎬 Debug: Skipping to ending...');
+async function debugSkipToEnding() {
+    console.log('🎬 Debug: Skipping to final cut scene with mock recordings...');
     debugStopAllGames();
-    triggerEndingSequence();
+    
+    // Check if we already have recordings
+    const hasRecordings = Object.values(gameRecordings).some(r => r !== null);
+    
+    if (hasRecordings) {
+        console.log('✅ Recordings already exist, skipping directly to playback...');
+        // Just show the playback with existing recordings
+        fadeToBlack.classList.add('active');
+        setTimeout(() => {
+            playbackRecordings();
+        }, 1000);
+        return;
+    }
+    
+    // Show a message to the user
+    console.log('📹 Creating mock recordings from camera...');
+    alert('Creating mock recordings from your camera for testing. This will take about 12 seconds. Make sure your camera is enabled!');
+    
+    // Initialize camera if not already done
+    if (!cameraStream) {
+        try {
+            await requestCameraAccess();
+            console.log('✅ Camera initialized for mock recordings');
+        } catch (error) {
+            console.error('❌ Failed to initialize camera:', error);
+            alert('Failed to initialize camera. Please ensure camera permissions are granted.');
+            return;
+        }
+    }
+    
+    // Create mock recordings for all 6 games (2 seconds each)
+    const gameKeys = ['doors', 'phone1', 'shooting', 'blink', 'redlight', 'cookie'];
+    
+    for (let i = 0; i < gameKeys.length; i++) {
+        const gameName = gameKeys[i];
+        console.log(`📹 Recording mock video ${i + 1}/6: ${gameName}...`);
+        
+        // Start recording
+        await startRecording(gameName);
+        
+        // Record for 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Stop recording
+        stopRecording();
+        
+        // Wait a moment for the recording to finalize
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        console.log(`✅ Mock recording ${i + 1}/6 complete: ${gameName}`);
+    }
+    
+    console.log('✅ All mock recordings created! Proceeding to final cut scene...');
+    
+    // Fade to black then show playback
+    fadeToBlack.classList.add('active');
+    setTimeout(() => {
+        playbackRecordings();
+    }, 1000);
 }
 
 // Reset entire game
@@ -4481,4 +4604,5 @@ window.debugTriggerBlinkJumpscare = triggerBlinkJumpscare;
 window.debugResetGame = debugResetGame;
 window.debugBackToElevator = debugBackToElevator;
 window.debugStartCookieGame = debugStartCookieGame;
+window.debugSkipToEnding = debugSkipToEnding;
 
