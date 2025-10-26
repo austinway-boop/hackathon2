@@ -40,13 +40,30 @@ body {
 }
 
 .warning-content {
-    max-width: 700px;
-    padding: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    border: 3px solid #ff0000;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 600px;
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #ff0000;
     border-radius: 10px;
     box-shadow: 0 0 50px rgba(255, 0, 0, 0.5), inset 0 0 30px rgba(255, 0, 0, 0.1);
     animation: pulseWarning 2s ease-in-out infinite;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.warning-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.warning-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.warning-content::-webkit-scrollbar-thumb {
+    background: #ff0000;
+    border-radius: 4px;
 }
 
 @keyframes pulseWarning {
@@ -60,38 +77,39 @@ body {
 
 .warning-title {
     color: #ff0000;
-    font-size: 48px;
+    font-size: clamp(24px, 5vw, 36px);
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
     font-weight: bold;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
 }
 
 .warning-text {
     color: #ffffff;
-    font-size: 18px;
-    line-height: 1.8;
-    margin-bottom: 30px;
+    font-size: clamp(14px, 2vw, 16px);
+    line-height: 1.6;
+    margin-bottom: 15px;
 }
 
 .warning-text strong {
     color: #ff6666;
-    font-size: 20px;
+    font-size: clamp(15px, 2.2vw, 17px);
 }
 
 .warning-text ul {
     list-style: none;
-    margin: 15px 0;
-    padding-left: 20px;
+    margin: 10px 0;
+    padding-left: 10px;
 }
 
 .warning-text li {
-    margin: 10px 0;
-    padding: 10px;
+    margin: 8px 0;
+    padding: 8px 10px;
     background: rgba(255, 0, 0, 0.1);
     border-left: 3px solid #ff0000;
     transition: background 0.3s;
+    font-size: clamp(13px, 1.8vw, 15px);
 }
 
 .warning-text li:hover {
@@ -101,17 +119,18 @@ body {
 .warning-disclaimer {
     background: rgba(255, 255, 0, 0.1);
     border: 2px solid #ffcc00;
-    padding: 15px;
-    margin: 20px 0;
+    padding: 10px;
+    margin: 15px 0;
     border-radius: 5px;
     color: #ffcc00;
     font-weight: bold;
     text-align: center;
+    font-size: clamp(12px, 1.8vw, 14px);
 }
 
 .warning-instructions {
-    margin-top: 25px;
-    padding: 20px;
+    margin-top: 15px;
+    padding: 12px;
     background: rgba(0, 100, 255, 0.1);
     border: 2px solid #0066ff;
     border-radius: 5px;
@@ -123,8 +142,8 @@ body {
 
 .warning-button {
     width: 100%;
-    padding: 20px;
-    font-size: 22px;
+    padding: 15px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: bold;
     color: #ffffff;
     background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
@@ -133,7 +152,8 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    margin-top: 10px;
 }
 
 .warning-button:hover {
@@ -144,6 +164,32 @@ body {
 
 .warning-button:active {
     transform: scale(0.98);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .warning-content {
+        width: 95vw;
+        padding: 15px 20px;
+    }
+    
+    .warning-title {
+        margin-bottom: 10px;
+    }
+    
+    .warning-text {
+        margin-bottom: 10px;
+    }
+    
+    .warning-disclaimer {
+        padding: 8px;
+        margin: 10px 0;
+    }
+    
+    .warning-instructions {
+        margin-top: 10px;
+        padding: 10px;
+    }
 }
 
 .background-texture {
