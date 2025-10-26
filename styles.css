@@ -394,13 +394,21 @@ body {
 
 .button {
     color: #fff;
-    font-size: 48px;
+    font-size: clamp(24px, 5vw, 48px);
     cursor: pointer;
     text-transform: lowercase;
     transition: opacity 0.3s ease;
-    position: absolute;
+    position: fixed;
     z-index: 5;
     font-family: 'Courier New', monospace;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+#startButton {
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
 }
 
 #playButton {
@@ -408,13 +416,18 @@ body {
     right: 20px;
     transition: left 0.3s ease, top 0.3s ease;
     white-space: nowrap;
-    max-width: calc(100vw - 120px);
-    box-sizing: border-box;
-    overflow: visible;
+    max-width: calc(100vw - 40px);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #openDoorButton {
-    font-size: 36px;
+    font-size: clamp(20px, 4vw, 36px);
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 40px);
+    text-align: center;
 }
 
 #openDoorButton:hover {
