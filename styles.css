@@ -2111,3 +2111,308 @@ body.screen-flashing::after {
     }
 }
 
+/* ============================================
+   ADVANCED DEBUG MENU STYLES
+   ============================================ */
+
+/* Enhanced Debug Menu Styles */
+.debug-menu {
+    width: 350px;
+    max-height: 80vh;
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid rgba(100, 100, 100, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.debug-header {
+    background: rgba(50, 50, 50, 0.95);
+    color: #00ff00;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.6);
+}
+
+/* Collapsible Sections */
+.debug-section-collapsible h3 {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+    padding: 6px 4px;
+}
+
+.debug-section-collapsible h3:hover {
+    background: rgba(80, 80, 80, 0.3);
+    color: rgba(180, 180, 180, 1);
+}
+
+.collapse-icon {
+    float: right;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.debug-section-collapsible[data-collapsed="true"] .debug-section-content {
+    display: none;
+}
+
+.debug-section-content {
+    display: block;
+    padding-top: 4px;
+}
+
+/* Performance Stats Grid */
+.debug-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.debug-stat {
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(80, 80, 80, 0.4);
+    padding: 6px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    color: rgba(140, 140, 140, 0.9);
+    font-size: 8px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    color: #00ff00;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* Sliders */
+.debug-slider-group {
+    margin: 6px 0;
+}
+
+.debug-slider-group label {
+    display: block;
+    font-size: 9px;
+    color: rgba(160, 160, 160, 0.9);
+    margin-bottom: 4px;
+}
+
+.debug-slider {
+    width: 100%;
+    height: 4px;
+    background: rgba(60, 60, 60, 0.5);
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.debug-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: rgba(180, 180, 180, 0.9);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.debug-slider::-webkit-slider-thumb:hover {
+    background: #00ff00;
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.8);
+}
+
+.debug-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: rgba(180, 180, 180, 0.9);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.debug-slider::-moz-range-thumb:hover {
+    background: #00ff00;
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.8);
+}
+
+/* Checkbox Toggles */
+.debug-toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.debug-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: rgba(30, 30, 30, 0.4);
+    border: 1px solid rgba(80, 80, 80, 0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 9px;
+    color: rgba(180, 180, 180, 0.9);
+}
+
+.debug-checkbox:hover {
+    background: rgba(50, 50, 50, 0.5);
+    border-color: rgba(120, 120, 120, 0.5);
+}
+
+.debug-checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.debug-checkbox input[type="checkbox"]:checked + span {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+/* Small buttons */
+.debug-btn-small {
+    padding: 3px 5px;
+    font-size: 8px;
+    margin-bottom: 3px;
+}
+
+.debug-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 6px;
+}
+
+/* Performance Overlay */
+.performance-overlay {
+    position: fixed;
+    top: 50px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #00ff00;
+    padding: 10px 15px;
+    z-index: 99997;
+    font-family: monospace;
+    font-size: 14px;
+    color: #00ff00;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.perf-stat {
+    margin: 3px 0;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+}
+
+.perf-stat span {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Face Mesh Debug Canvas */
+.face-mesh-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99996;
+    pointer-events: none;
+}
+
+/* Scrollbar styling for debug menu */
+.debug-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.debug-content::-webkit-scrollbar-track {
+    background: rgba(20, 20, 20, 0.5);
+}
+
+.debug-content::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.6);
+    border-radius: 4px;
+}
+
+.debug-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.8);
+}
+
+/* Enhanced button styles */
+.debug-btn {
+    transition: all 0.15s ease;
+}
+
+.debug-btn:active {
+    transform: scale(0.97);
+}
+
+/* Responsive adjustments for debug menu */
+@media (max-width: 768px) {
+    .debug-menu {
+        width: 280px;
+        max-height: 60vh;
+        font-size: 8px;
+    }
+    
+    .debug-header {
+        font-size: 9px;
+        padding: 6px 8px;
+    }
+    
+    .performance-overlay {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-height: 600px) {
+    .debug-menu {
+        max-height: 50vh;
+    }
+}
+
+/* Animation for debug menu appearance */
+@keyframes debugMenuSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.debug-menu.active {
+    animation: debugMenuSlideIn 0.2s ease-out;
+}
+
+/* Highlight effect for important stat values */
+.stat-value {
+    animation: statPulse 2s infinite;
+}
+
+@keyframes statPulse {
+    0%, 100% {
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+    }
+}
+

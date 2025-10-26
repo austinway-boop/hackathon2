@@ -326,56 +326,200 @@
         <canvas id="cookieCanvas" class="cookie-canvas"></canvas>
     </div>
 
-    <!-- Debug Menu -->
+    <!-- Advanced Debug Menu -->
     <div class="debug-menu" id="debugMenu">
         <div class="debug-header">
-            <span>DEBUG MENU</span>
+            <span>🔧 ADVANCED DEBUG MENU</span>
             <button class="debug-close" id="debugClose">✕</button>
         </div>
         <div class="debug-content">
-            <div class="debug-section">
-                <h3>🎮 Minigames</h3>
-                <button class="debug-btn" onclick="debugStartDoorGame()">🚪 Door Game</button>
-                <button class="debug-btn" onclick="debugStartRedLight()">🚦 Red Light Green Light</button>
-                <button class="debug-btn" onclick="debugStartPhone()">📞 Phone Game</button>
-                <button class="debug-btn" onclick="debugStartShootingGallery()">🎯 Shooting Gallery</button>
-                <button class="debug-btn debug-btn-highlight" onclick="debugStartBlinkGame()">👁️ Blink Game (Eye Tracking)</button>
-                <button class="debug-btn debug-btn-highlight" onclick="debugStartCookieGame()">🍪 Cookie Tracing Game (NEW!)</button>
-            </div>
-            <div class="debug-section">
-                <h3>📞 Phone Game States</h3>
-                <button class="debug-btn" onclick="debugPhoneWithJumpscare()">Phone + Jumpscare ✓</button>
-                <button class="debug-btn" onclick="debugPhoneNoJumpscare()">Phone (No Jumpscare) ✗</button>
-            </div>
-            <div class="debug-section">
-                <h3>🎯 Target Game States</h3>
-                <button class="debug-btn" onclick="debugTargetForceJumpscare()">Force Target Jumpscare ✓</button>
-                <button class="debug-btn" onclick="debugTargetNeverJumpscare()">Never Jumpscare (Loop) ∞</button>
-            </div>
-            <div class="debug-section">
-                <h3>👁️ Blink Game Options</h3>
-                <button class="debug-btn" onclick="debugBlinkGameSlowMode()">Slow Mode (Easy)</button>
-                <button class="debug-btn" onclick="debugBlinkGameFastMode()">Fast Mode (Hard)</button>
-                <button class="debug-btn" onclick="debugBlinkGameInstantJumpscare()">Instant Jumpscare</button>
-                <div class="debug-info" id="blinkGameInfo">
-                    Sensitivity: <span id="blinkSensitivity">High (0.35)</span><br>
-                    Face Detected: <span id="faceDetected">Initializing...</span><br>
-                    Eye Status: <span id="eyeStatus">Unknown</span><br>
-                    EAR Value: <span id="earValue">-</span><br>
-                    <small>💡 Lower EAR = more closed eyes | Speed: 50m/s</small>
+            <!-- Performance Monitor -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="false">
+                <h3 onclick="toggleDebugSection(this)">📊 Performance Monitor <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <div class="debug-stats-grid">
+                        <div class="debug-stat">
+                            <span class="stat-label">FPS:</span>
+                            <span class="stat-value" id="debugFPS">0</span>
+                        </div>
+                        <div class="debug-stat">
+                            <span class="stat-label">Frame Time:</span>
+                            <span class="stat-value" id="debugFrameTime">0ms</span>
+                        </div>
+                        <div class="debug-stat">
+                            <span class="stat-label">Memory:</span>
+                            <span class="stat-value" id="debugMemory">N/A</span>
+                        </div>
+                        <div class="debug-stat">
+                            <span class="stat-label">Active Game:</span>
+                            <span class="stat-value" id="debugActiveGame">None</span>
+                        </div>
+                    </div>
+                    <button class="debug-btn debug-btn-small" onclick="togglePerformanceOverlay()">Toggle Performance Overlay</button>
                 </div>
             </div>
-            <div class="debug-section">
-                <h3>💀 Jumpscares</h3>
-                <button class="debug-btn" onclick="debugTriggerJumpscare1()">Jumpscare 1</button>
-                <button class="debug-btn" onclick="debugTriggerJumpscare2()">Jumpscare 2</button>
-                <button class="debug-btn" onclick="debugTriggerJumpscare3()">Jumpscare 3</button>
-                <button class="debug-btn" onclick="triggerPhoneJumpscare()">Phone Jumpscare</button>
-                <button class="debug-btn" onclick="debugTriggerCameraJumpscare()">Camera Jumpscare</button>
-                <button class="debug-btn" onclick="debugTriggerBlinkJumpscare()">Blink Jumpscare</button>
+
+            <!-- Camera & Face Tracking -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="false">
+                <h3 onclick="toggleDebugSection(this)">📹 Camera & Face Tracking <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <div class="debug-info" id="cameraInfo">
+                        Camera Status: <span id="cameraStatus">Unknown</span><br>
+                        Face Detected: <span id="faceDetected">Initializing...</span><br>
+                        Eye Status: <span id="eyeStatus">Unknown</span><br>
+                        EAR Value: <span id="earValue">-</span><br>
+                        <small>💡 Lower EAR = more closed eyes</small>
+                    </div>
+                    <div class="debug-controls">
+                        <button class="debug-btn debug-btn-small" onclick="toggleFaceMeshOverlay()">Toggle Face Mesh Overlay</button>
+                        <button class="debug-btn debug-btn-small" onclick="toggleCameraFeed()">Toggle Camera Feed</button>
+                        <button class="debug-btn debug-btn-small" onclick="debugRecalibrateFace()">Recalibrate Face Detection</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Audio Controls -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">🔊 Audio Controls <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <div class="debug-slider-group">
+                        <label>Master Volume: <span id="masterVolumeValue">100%</span></label>
+                        <input type="range" min="0" max="100" value="100" class="debug-slider" id="masterVolume" oninput="updateMasterVolume(this.value)">
+                    </div>
+                    <div class="debug-slider-group">
+                        <label>Music Volume: <span id="musicVolumeValue">100%</span></label>
+                        <input type="range" min="0" max="100" value="100" class="debug-slider" id="musicVolume" oninput="updateMusicVolume(this.value)">
+                    </div>
+                    <div class="debug-slider-group">
+                        <label>SFX Volume: <span id="sfxVolumeValue">100%</span></label>
+                        <input type="range" min="0" max="100" value="100" class="debug-slider" id="sfxVolume" oninput="updateSFXVolume(this.value)">
+                    </div>
+                    <button class="debug-btn debug-btn-danger" onclick="debugMuteAll()">🔇 Mute All</button>
+                    <button class="debug-btn" onclick="debugStopAllAudio()">⏹️ Stop All Audio</button>
+                </div>
+            </div>
+
+            <!-- God Mode & Cheats -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="false">
+                <h3 onclick="toggleDebugSection(this)">⚡ God Mode & Cheats <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <div class="debug-toggle-group">
+                        <label class="debug-checkbox">
+                            <input type="checkbox" id="godModeInvincible" onchange="toggleGodModeInvincible(this.checked)">
+                            <span>🛡️ Invincibility (No Jumpscares)</span>
+                        </label>
+                        <label class="debug-checkbox">
+                            <input type="checkbox" id="godModeAutoWin" onchange="toggleGodModeAutoWin(this.checked)">
+                            <span>🏆 Auto-Win All Games</span>
+                        </label>
+                        <label class="debug-checkbox">
+                            <input type="checkbox" id="godModeSlowMotion" onchange="toggleGodModeSlowMotion(this.checked)">
+                            <span>🐌 Slow Motion (0.5x)</span>
+                        </label>
+                        <label class="debug-checkbox">
+                            <input type="checkbox" id="godModeFastForward" onchange="toggleGodModeFastForward(this.checked)">
+                            <span>⚡ Fast Forward (2x)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minigames -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="false">
+                <h3 onclick="toggleDebugSection(this)">🎮 Minigames <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugStartDoorGame()">🚪 Door Game</button>
+                    <button class="debug-btn" onclick="debugStartRedLight()">🚦 Red Light Green Light</button>
+                    <button class="debug-btn" onclick="debugStartPhone()">📞 Phone Game</button>
+                    <button class="debug-btn" onclick="debugStartShootingGallery()">🎯 Shooting Gallery</button>
+                    <button class="debug-btn debug-btn-highlight" onclick="debugStartBlinkGame()">👁️ Blink Game</button>
+                    <button class="debug-btn debug-btn-highlight" onclick="debugStartCookieGame()">🍪 Cookie Game</button>
+                </div>
+            </div>
+
+            <!-- Phone Game States -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">📞 Phone Game States <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugPhoneWithJumpscare()">Phone + Jumpscare ✓</button>
+                    <button class="debug-btn" onclick="debugPhoneNoJumpscare()">Phone (No Jumpscare) ✗</button>
+                </div>
+            </div>
+
+            <!-- Target Game States -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">🎯 Target Game States <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugTargetForceJumpscare()">Force Jumpscare ✓</button>
+                    <button class="debug-btn" onclick="debugTargetNeverJumpscare()">Never Jumpscare (Loop) ∞</button>
+                </div>
+            </div>
+
+            <!-- Blink Game Options -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">👁️ Blink Game Options <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugBlinkGameSlowMode()">Slow Mode (Easy)</button>
+                    <button class="debug-btn" onclick="debugBlinkGameFastMode()">Fast Mode (Hard)</button>
+                    <button class="debug-btn" onclick="debugBlinkGameInstantJumpscare()">Instant Jumpscare</button>
+                    <div class="debug-slider-group">
+                        <label>Blink Sensitivity: <span id="blinkSensitivityValue">0.35</span></label>
+                        <input type="range" min="0.2" max="0.6" step="0.05" value="0.35" class="debug-slider" id="blinkSensitivitySlider" oninput="updateBlinkSensitivity(this.value)">
+                    </div>
+                    <div class="debug-info">
+                        Current Sensitivity: <span id="blinkSensitivity">High (0.35)</span><br>
+                        <small>💡 Higher value = easier to keep eyes open</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cookie Game Options -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">🍪 Cookie Game Options <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugCookieGameEasy()">Easy Mode (90s)</button>
+                    <button class="debug-btn" onclick="debugCookieGameNormal()">Normal Mode (60s)</button>
+                    <button class="debug-btn" onclick="debugCookieGameHard()">Hard Mode (30s)</button>
+                    <button class="debug-btn" onclick="debugCookieGameInstantWin()">Instant Win</button>
+                    <div class="debug-slider-group">
+                        <label>Trace Size: <span id="traceSizeValue">10px</span></label>
+                        <input type="range" min="5" max="30" value="10" class="debug-slider" id="traceSizeSlider" oninput="updateTraceSize(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jumpscares -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">💀 Jumpscares <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <button class="debug-btn" onclick="debugTriggerJumpscare1()">Jumpscare 1</button>
+                    <button class="debug-btn" onclick="debugTriggerJumpscare2()">Jumpscare 2</button>
+                    <button class="debug-btn" onclick="debugTriggerJumpscare3()">Jumpscare 3</button>
+                    <button class="debug-btn" onclick="triggerPhoneJumpscare()">Phone Jumpscare</button>
+                    <button class="debug-btn" onclick="debugTriggerCameraJumpscare()">Camera Jumpscare</button>
+                    <button class="debug-btn" onclick="debugTriggerBlinkJumpscare()">Blink Jumpscare</button>
+                    <button class="debug-btn debug-btn-highlight" onclick="debugRandomJumpscare()">🎲 Random Jumpscare</button>
+                </div>
+            </div>
+
+            <!-- Recording Controls -->
+            <div class="debug-section debug-section-collapsible" data-collapsed="true">
+                <h3 onclick="toggleDebugSection(this)">📹 Recording Controls <span class="collapse-icon">▼</span></h3>
+                <div class="debug-section-content">
+                    <div class="debug-info">
+                        Recording Status: <span id="recordingStatus">Inactive</span><br>
+                        Recordings Saved: <span id="recordingsCount">0/6</span>
+                    </div>
+                    <button class="debug-btn" onclick="debugStartManualRecording()">▶️ Start Recording</button>
+                    <button class="debug-btn" onclick="debugStopManualRecording()">⏹️ Stop Recording</button>
+                    <button class="debug-btn" onclick="debugClearRecordings()">🗑️ Clear All Recordings</button>
+                    <button class="debug-btn" onclick="debugDownloadRecordings()">💾 Download Recordings</button>
+                </div>
+            </div>
+
+            <!-- Main Controls -->
             <div class="debug-section">
-                <h3>🎬 Controls</h3>
+                <h3>🎬 Main Controls</h3>
                 <button class="debug-btn" onclick="debugBackToElevator()">🛗 Back to Elevator</button>
                 <button class="debug-btn" onclick="debugStopAllGames()">⏹️ Stop All Games</button>
                 <button class="debug-btn debug-btn-highlight" onclick="debugSkipToEnding()">🎬 Skip to Ending</button>
@@ -384,6 +528,16 @@
         </div>
     </div>
     <button class="debug-toggle" id="debugToggle">DEBUG</button>
+
+    <!-- Performance Overlay -->
+    <div class="performance-overlay" id="performanceOverlay" style="display: none;">
+        <div class="perf-stat">FPS: <span id="perfFPS">0</span></div>
+        <div class="perf-stat">Frame: <span id="perfFrameTime">0ms</span></div>
+        <div class="perf-stat">Memory: <span id="perfMemory">N/A</span></div>
+    </div>
+
+    <!-- Face Mesh Debug Canvas -->
+    <canvas id="faceMeshDebugCanvas" class="face-mesh-overlay" style="display: none;"></canvas>
 
     <!-- Load main game script -->
     <script src="js/main.js"></script>

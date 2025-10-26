@@ -4486,3 +4486,486 @@ window.debugBackToElevator = debugBackToElevator;
 window.debugStartCookieGame = debugStartCookieGame;
 window.debugSkipToEnding = debugSkipToEnding;
 
+// ============================================
+// ADVANCED DEBUG MENU FEATURES
+// ============================================
+
+// Performance monitoring variables
+let debugFPSFrames = 0;
+let debugFPSLastTime = performance.now();
+let debugLastFrameTime = performance.now();
+let performanceOverlayVisible = false;
+let faceMeshOverlayVisible = false;
+let cameraFeedVisible = false;
+
+// God mode variables
+let godModeInvincibleEnabled = false;
+let godModeAutoWinEnabled = false;
+let godModeSlowMotionEnabled = false;
+let godModeFastForwardEnabled = false;
+
+// Audio volume tracking
+let masterVolumeLevel = 1.0;
+let musicVolumeLevel = 1.0;
+let sfxVolumeLevel = 1.0;
+
+// Collapsible section toggle
+function toggleDebugSection(headerElement) {
+    const section = headerElement.parentElement;
+    const content = section.querySelector('.debug-section-content');
+    const icon = headerElement.querySelector('.collapse-icon');
+    
+    if (section.dataset.collapsed === 'true') {
+        section.dataset.collapsed = 'false';
+        content.style.display = 'block';
+        icon.textContent = '▼';
+    } else {
+        section.dataset.collapsed = 'true';
+        content.style.display = 'none';
+        icon.textContent = '▶';
+    }
+}
+
+// Performance monitoring
+function updatePerformanceStats() {
+    const now = performance.now();
+    debugFPSFrames++;
+    
+    // Update FPS every second
+    if (now >= debugFPSLastTime + 1000) {
+        const fps = Math.round((debugFPSFrames * 1000) / (now - debugFPSLastTime));
+        debugFPSFrames = 0;
+        debugFPSLastTime = now;
+        
+        document.getElementById('debugFPS').textContent = fps;
+        document.getElementById('perfFPS').textContent = fps;
+    }
+    
+    // Update frame time
+    const frameTime = (now - debugLastFrameTime).toFixed(2);
+    debugLastFrameTime = now;
+    document.getElementById('debugFrameTime').textContent = frameTime + 'ms';
+    document.getElementById('perfFrameTime').textContent = frameTime + 'ms';
+    
+    // Update memory if available
+    if (performance.memory) {
+        const usedMB = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        document.getElementById('debugMemory').textContent = usedMB + ' MB';
+        document.getElementById('perfMemory').textContent = usedMB + ' MB';
+    }
+    
+    // Update active game
+    let activeGame = 'None';
+    if (doorGameContainer.classList.contains('active')) activeGame = 'Door Game';
+    else if (redlightGameActive) activeGame = 'Red Light';
+    else if (phoneGameActive) activeGame = 'Phone Game';
+    else if (shootingGalleryActive) activeGame = 'Shooting Gallery';
+    else if (blinkGameActive) activeGame = 'Blink Game';
+    else if (cookieGameActive) activeGame = 'Cookie Game';
+    else if (elevatorContainer.classList.contains('shaking')) activeGame = 'Elevator';
+    document.getElementById('debugActiveGame').textContent = activeGame;
+    
+    // Update camera status
+    const cameraStatusSpan = document.getElementById('cameraStatus');
+    if (cameraStream) {
+        cameraStatusSpan.textContent = '✓ Active';
+        cameraStatusSpan.style.color = '#00ff00';
+    } else {
+        cameraStatusSpan.textContent = '✗ Inactive';
+        cameraStatusSpan.style.color = '#ff0000';
+    }
+    
+    requestAnimationFrame(updatePerformanceStats);
+}
+
+// Start performance monitoring
+updatePerformanceStats();
+
+// Toggle performance overlay
+function togglePerformanceOverlay() {
+    performanceOverlayVisible = !performanceOverlayVisible;
+    document.getElementById('performanceOverlay').style.display = 
+        performanceOverlayVisible ? 'block' : 'none';
+}
+
+// Toggle face mesh overlay
+function toggleFaceMeshOverlay() {
+    faceMeshOverlayVisible = !faceMeshOverlayVisible;
+    const canvas = document.getElementById('faceMeshDebugCanvas');
+    canvas.style.display = faceMeshOverlayVisible ? 'block' : 'none';
+    
+    if (faceMeshOverlayVisible) {
+        // Set up canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        drawFaceMeshDebug();
+    }
+}
+
+// Draw face mesh debug overlay
+function drawFaceMeshDebug() {
+    if (!faceMeshOverlayVisible) return;
+    
+    const canvas = document.getElementById('faceMeshDebugCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (faceMesh && faceMesh.length > 0) {
+        const face = faceMesh[0];
+        
+        // Draw all landmarks
+        ctx.fillStyle = '#00ff00';
+        for (let i = 0; i < face.keypoints.length; i++) {
+            const kp = face.keypoints[i];
+            ctx.beginPath();
+            ctx.arc(kp.x, kp.y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        
+        // Highlight eye landmarks
+        ctx.fillStyle = '#ff0000';
+        const eyeIndices = [33, 133, 160, 159, 158, 144, 145, 153, // Left eye
+                           362, 263, 387, 386, 385, 373, 374, 380]; // Right eye
+        for (const idx of eyeIndices) {
+            if (face.keypoints[idx]) {
+                const kp = face.keypoints[idx];
+                ctx.beginPath();
+                ctx.arc(kp.x, kp.y, 4, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+    }
+    
+    requestAnimationFrame(drawFaceMeshDebug);
+}
+
+// Toggle camera feed
+function toggleCameraFeed() {
+    cameraFeedVisible = !cameraFeedVisible;
+    const video = document.getElementById('cameraVideo');
+    if (cameraFeedVisible) {
+        video.style.position = 'fixed';
+        video.style.top = '10px';
+        video.style.right = '10px';
+        video.style.width = '320px';
+        video.style.height = '240px';
+        video.style.zIndex = '999999';
+        video.style.border = '2px solid #00ff00';
+        video.style.display = 'block';
+    } else {
+        video.style.display = 'none';
+    }
+}
+
+// Recalibrate face detection
+async function debugRecalibrateFace() {
+    console.log('🔧 Recalibrating face detection...');
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
+    cameraStream = null;
+    faceMeshDetector = null;
+    await requestCameraAccess();
+    console.log('✅ Face detection recalibrated');
+}
+
+// Audio control functions
+function updateMasterVolume(value) {
+    masterVolumeLevel = value / 100;
+    document.getElementById('masterVolumeValue').textContent = value + '%';
+    applyVolumes();
+}
+
+function updateMusicVolume(value) {
+    musicVolumeLevel = value / 100;
+    document.getElementById('musicVolumeValue').textContent = value + '%';
+    applyVolumes();
+}
+
+function updateSFXVolume(value) {
+    sfxVolumeLevel = value / 100;
+    document.getElementById('sfxVolumeValue').textContent = value + '%';
+    applyVolumes();
+}
+
+function applyVolumes() {
+    // Music
+    const musicElements = [audioPlayer, fillerMusic, endMusic, horrorMusic, suspenseMusic, 
+                          midnightCarouselMusic, blinkGameMusic, cookieMusic, redlightMusic];
+    musicElements.forEach(el => {
+        if (el) el.volume = masterVolumeLevel * musicVolumeLevel;
+    });
+    
+    // SFX
+    const sfxElements = [jumpscareSound, jumpscareSound2, jumpscareSound3, jumpscareSound4, 
+                        jumpscareSound5, gunshotSound, phoneRingSound, clickSound];
+    sfxElements.forEach(el => {
+        if (el) el.volume = masterVolumeLevel * sfxVolumeLevel;
+    });
+}
+
+function debugMuteAll() {
+    document.getElementById('masterVolume').value = 0;
+    updateMasterVolume(0);
+}
+
+function debugStopAllAudio() {
+    const allAudio = document.querySelectorAll('audio');
+    allAudio.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+}
+
+// God mode functions
+function toggleGodModeInvincible(enabled) {
+    godModeInvincibleEnabled = enabled;
+    console.log('🛡️ God Mode Invincibility:', enabled);
+    
+    if (enabled) {
+        // Override jumpscare functions
+        debugPhoneJumpscareOverride = false;
+        debugTargetJumpscareOverride = false;
+    } else {
+        debugPhoneJumpscareOverride = null;
+        debugTargetJumpscareOverride = null;
+    }
+}
+
+function toggleGodModeAutoWin(enabled) {
+    godModeAutoWinEnabled = enabled;
+    console.log('🏆 God Mode Auto-Win:', enabled);
+    
+    if (enabled) {
+        // Auto-complete active game after 2 seconds
+        if (blinkGameActive) {
+            setTimeout(() => { if (godModeAutoWinEnabled) winBlinkGame(); }, 2000);
+        } else if (cookieGameActive) {
+            setTimeout(() => { if (godModeAutoWinEnabled) winCookieGame(); }, 2000);
+        } else if (redlightGameActive) {
+            setTimeout(() => { if (godModeAutoWinEnabled) winRedLightGame(); }, 2000);
+        } else if (shootingGalleryActive) {
+            setTimeout(() => { if (godModeAutoWinEnabled) winShootingGallery(); }, 2000);
+        }
+    }
+}
+
+function toggleGodModeSlowMotion(enabled) {
+    godModeSlowMotionEnabled = enabled;
+    console.log('🐌 God Mode Slow Motion:', enabled);
+    
+    if (enabled) {
+        document.getElementById('godModeFastForward').checked = false;
+        godModeFastForwardEnabled = false;
+    }
+    
+    // Apply to all audio
+    const allAudio = document.querySelectorAll('audio');
+    allAudio.forEach(audio => {
+        audio.playbackRate = enabled ? 0.5 : godModeFastForwardEnabled ? 2.0 : 1.0;
+    });
+}
+
+function toggleGodModeFastForward(enabled) {
+    godModeFastForwardEnabled = enabled;
+    console.log('⚡ God Mode Fast Forward:', enabled);
+    
+    if (enabled) {
+        document.getElementById('godModeSlowMotion').checked = false;
+        godModeSlowMotionEnabled = false;
+    }
+    
+    // Apply to all audio
+    const allAudio = document.querySelectorAll('audio');
+    allAudio.forEach(audio => {
+        audio.playbackRate = enabled ? 2.0 : godModeSlowMotionEnabled ? 0.5 : 1.0;
+    });
+}
+
+// Blink sensitivity control
+function updateBlinkSensitivity(value) {
+    eyeAspectRatioThreshold = parseFloat(value);
+    document.getElementById('blinkSensitivityValue').textContent = value;
+    document.getElementById('blinkSensitivity').textContent = `Custom (${value})`;
+    console.log('👁️ Blink sensitivity set to:', value);
+}
+
+// Cookie game difficulty options
+async function debugCookieGameEasy() {
+    await requestCameraAccess();
+    debugStopAllGames();
+    cookieTimeLeft = 90; // Easy: 90 seconds
+    horrorMusic.play();
+    doorGameContainer.classList.add('active');
+    typeWriter('Trace the cookie. (Easy Mode - 90s)', typewriterText, 80, function() {
+        setTimeout(function() {
+            doorGameContainer.classList.remove('active');
+            horrorMusic.pause();
+            horrorMusic.currentTime = 0;
+            startCookieGame();
+        }, 1500);
+    });
+}
+
+async function debugCookieGameNormal() {
+    await requestCameraAccess();
+    debugStopAllGames();
+    cookieTimeLeft = 60; // Normal: 60 seconds
+    horrorMusic.play();
+    doorGameContainer.classList.add('active');
+    typeWriter('Trace the cookie. (Normal Mode - 60s)', typewriterText, 80, function() {
+        setTimeout(function() {
+            doorGameContainer.classList.remove('active');
+            horrorMusic.pause();
+            horrorMusic.currentTime = 0;
+            startCookieGame();
+        }, 1500);
+    });
+}
+
+async function debugCookieGameHard() {
+    await requestCameraAccess();
+    debugStopAllGames();
+    cookieTimeLeft = 30; // Hard: 30 seconds
+    horrorMusic.play();
+    doorGameContainer.classList.add('active');
+    typeWriter('Trace the cookie. (HARD Mode - 30s)', typewriterText, 80, function() {
+        setTimeout(function() {
+            doorGameContainer.classList.remove('active');
+            horrorMusic.pause();
+            horrorMusic.currentTime = 0;
+            startCookieGame();
+        }, 1500);
+    });
+}
+
+async function debugCookieGameInstantWin() {
+    await requestCameraAccess();
+    debugStopAllGames();
+    horrorMusic.play();
+    doorGameContainer.classList.add('active');
+    typeWriter('Trace the cookie. (Instant Win!)', typewriterText, 80, function() {
+        setTimeout(function() {
+            doorGameContainer.classList.remove('active');
+            horrorMusic.pause();
+            horrorMusic.currentTime = 0;
+            startCookieGame();
+            // Win after 1 second
+            setTimeout(() => winCookieGame(), 1000);
+        }, 1500);
+    });
+}
+
+// Trace size control
+function updateTraceSize(value) {
+    document.getElementById('traceSizeValue').textContent = value + 'px';
+    // This would need to be integrated with the cookie game drawing code
+    console.log('🖌️ Trace size set to:', value + 'px');
+}
+
+// Random jumpscare
+function debugRandomJumpscare() {
+    const jumpscares = [
+        debugTriggerJumpscare1,
+        debugTriggerJumpscare2,
+        debugTriggerJumpscare3,
+        triggerPhoneJumpscare,
+        debugTriggerCameraJumpscare,
+        triggerBlinkJumpscare
+    ];
+    const randomIndex = Math.floor(Math.random() * jumpscares.length);
+    console.log('🎲 Triggering random jumpscare:', randomIndex + 1);
+    jumpscares[randomIndex]();
+}
+
+// Recording controls
+function debugStartManualRecording() {
+    const gameName = 'manual_' + Date.now();
+    startRecording(gameName);
+    document.getElementById('recordingStatus').textContent = 'Recording...';
+    document.getElementById('recordingStatus').style.color = '#ff0000';
+    console.log('▶️ Manual recording started');
+}
+
+function debugStopManualRecording() {
+    stopRecording();
+    document.getElementById('recordingStatus').textContent = 'Inactive';
+    document.getElementById('recordingStatus').style.color = '#ffffff';
+    updateRecordingsCount();
+    console.log('⏹️ Manual recording stopped');
+}
+
+function debugClearRecordings() {
+    if (confirm('Clear all recordings? This cannot be undone.')) {
+        gameRecordings = {
+            doors: null,
+            phone1: null,
+            shooting: null,
+            blink: null,
+            redlight: null,
+            cookie: null
+        };
+        updateRecordingsCount();
+        console.log('🗑️ All recordings cleared');
+    }
+}
+
+function debugDownloadRecordings() {
+    const recordingEntries = Object.entries(gameRecordings).filter(([_, blob]) => blob !== null);
+    
+    if (recordingEntries.length === 0) {
+        alert('No recordings to download!');
+        return;
+    }
+    
+    console.log(`💾 Downloading ${recordingEntries.length} recordings...`);
+    
+    recordingEntries.forEach(([gameName, blob]) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `recording_${gameName}_${Date.now()}.webm`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+    
+    console.log('✅ Downloads complete');
+}
+
+function updateRecordingsCount() {
+    const count = Object.values(gameRecordings).filter(r => r !== null).length;
+    document.getElementById('recordingsCount').textContent = `${count}/6`;
+}
+
+// Update recordings count periodically
+setInterval(updateRecordingsCount, 1000);
+
+// Expose all new functions to window
+window.toggleDebugSection = toggleDebugSection;
+window.togglePerformanceOverlay = togglePerformanceOverlay;
+window.toggleFaceMeshOverlay = toggleFaceMeshOverlay;
+window.toggleCameraFeed = toggleCameraFeed;
+window.debugRecalibrateFace = debugRecalibrateFace;
+window.updateMasterVolume = updateMasterVolume;
+window.updateMusicVolume = updateMusicVolume;
+window.updateSFXVolume = updateSFXVolume;
+window.debugMuteAll = debugMuteAll;
+window.debugStopAllAudio = debugStopAllAudio;
+window.toggleGodModeInvincible = toggleGodModeInvincible;
+window.toggleGodModeAutoWin = toggleGodModeAutoWin;
+window.toggleGodModeSlowMotion = toggleGodModeSlowMotion;
+window.toggleGodModeFastForward = toggleGodModeFastForward;
+window.updateBlinkSensitivity = updateBlinkSensitivity;
+window.debugCookieGameEasy = debugCookieGameEasy;
+window.debugCookieGameNormal = debugCookieGameNormal;
+window.debugCookieGameHard = debugCookieGameHard;
+window.debugCookieGameInstantWin = debugCookieGameInstantWin;
+window.updateTraceSize = updateTraceSize;
+window.debugRandomJumpscare = debugRandomJumpscare;
+window.debugStartManualRecording = debugStartManualRecording;
+window.debugStopManualRecording = debugStopManualRecording;
+window.debugClearRecordings = debugClearRecordings;
+window.debugDownloadRecordings = debugDownloadRecordings;
+
+console.log('🔧 Advanced Debug Menu Loaded');
+
