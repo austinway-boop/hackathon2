@@ -94,235 +94,121 @@ const eyesCanvas4 = document.getElementById('eyesCanvas4');
 const eyesCanvas5 = document.getElementById('eyesCanvas5');
 const eyesCanvas6 = document.getElementById('eyesCanvas6');
 
-// Credits array - starts normal, gets weird, then corrupted
+// Credits array - funny credits with AI acknowledgement
 const CREDITS = [
-    // Normal production crew (0-30)
+    // Real credits with AI acknowledgement
     { type: 'section', text: 'ELEVATOR HORROR' },
-    { type: 'role', text: 'Directed by', name: 'James Corridor' },
-    { type: 'role', text: 'Produced by', name: 'Sarah Mitchell' },
-    { type: 'role', text: 'Written by', name: 'Marcus Blackwood' },
-    { type: 'role', text: 'Executive Producer', name: 'Robert Henderson' },
-    { type: 'role', text: 'Associate Producer', name: 'Emily Chang' },
+    { type: 'role', text: 'A Game By', name: 'Austin Way' },
+    { type: 'role', text: 'With Assistance From', name: 'Claude AI (Anthropic)' },
+    { type: 'section', text: 'PROGRAMMING' },
+    { type: 'role', text: 'Game Logic', name: 'Claude AI' },
+    { type: 'role', text: 'JavaScript Development', name: 'Claude AI' },
+    { type: 'role', text: 'Bug Fixing', name: 'Claude AI (so many bugs)' },
+    { type: 'role', text: 'Feature Implementation', name: 'Claude AI' },
+    { type: 'role', text: 'Code Refactoring', name: 'Claude AI (multiple times)' },
+    { type: 'section', text: 'GAME DESIGN' },
+    { type: 'role', text: 'Door Game Design', name: 'Claude AI' },
+    { type: 'role', text: 'Phone Game Design', name: 'Claude AI' },
+    { type: 'role', text: 'Shooting Gallery Design', name: 'Claude AI' },
+    { type: 'role', text: 'Blink Game Design', name: 'Claude AI' },
+    { type: 'role', text: 'Red Light Green Light', name: 'Claude AI' },
+    { type: 'role', text: 'Cookie Tracing Game', name: 'Claude AI' },
+    { type: 'role', text: 'Jumpscare Choreography', name: 'Claude AI' },
+    { type: 'section', text: 'TECHNICAL EFFECTS' },
+    { type: 'role', text: 'Camera Access Implementation', name: 'Claude AI' },
+    { type: 'role', text: 'Face Detection Integration', name: 'Claude AI' },
+    { type: 'role', text: 'Blood Drip Physics', name: 'Claude AI' },
+    { type: 'role', text: 'Elevator Animation', name: 'Claude AI' },
+    { type: 'role', text: 'Audio Synchronization', name: 'Claude AI' },
+    
+    // Funny Credits
     { type: 'section', text: 'CAST' },
-    { type: 'role', text: 'Elevator Passenger', name: 'YOU' },
-    { type: 'role', text: 'Voice on Phone', name: 'Katherine Wells' },
-    { type: 'role', text: 'Elevator Operator', name: 'Michael Stone' },
-    { type: 'section', text: 'PRODUCTION' },
-    { type: 'role', text: 'Director of Photography', name: 'David Chen' },
-    { type: 'role', text: 'Production Designer', name: 'Lisa Rodriguez' },
-    { type: 'role', text: 'Costume Designer', name: 'Amanda Brooks' },
-    { type: 'role', text: 'Makeup Artist', name: 'Jennifer Park' },
-    { type: 'role', text: 'Special Effects', name: 'Thomas Wright' },
-    { type: 'section', text: 'SOUND & MUSIC' },
-    { type: 'role', text: 'Original Score', name: 'Alexander Novak' },
-    { type: 'role', text: 'Sound Designer', name: 'Rachel Kim' },
-    { type: 'role', text: 'Sound Mixer', name: 'Daniel Foster' },
-    { type: 'role', text: 'Foley Artist', name: 'Steven Garcia' },
-    { type: 'section', text: 'EDITING' },
-    { type: 'role', text: 'Editor', name: 'Christopher Lee' },
-    { type: 'role', text: 'Assistant Editor', name: 'Nicole Martinez' },
-    { type: 'role', text: 'Visual Effects', name: 'Brandon Taylor' },
-    { type: 'role', text: 'Color Grading', name: 'Jessica Anderson' },
-    
-    // Starting to get weird (31-50)
-    { type: 'section', text: 'ADDITIONAL CAST' },
-    { type: 'role', text: 'Shadow Figure', name: 'Unknown' },
-    { type: 'role', text: 'Breathing Sounds', name: 'The Darkness' },
-    { type: 'role', text: 'Door #1', name: 'Gregory Thompson' },
-    { type: 'role', text: 'Door #2', name: 'Monica Stevens' },
-    { type: 'role', text: 'Door #3', name: 'IT KNOWS' },
-    { type: 'role', text: 'Hallway Monitor', name: 'Patricia Williams' },
-    { type: 'role', text: 'The Watcher', name: '???????????????' },
-    { type: 'section', text: 'CREATURE DESIGN' },
-    { type: 'role', text: 'Monster Concept Art', name: 'Vincent Cross' },
-    { type: 'role', text: 'Creature Fabrication', name: 'REDACTED' },
-    { type: 'role', text: 'Practical Effects Lead', name: 'Nathan Price' },
-    { type: 'role', text: 'Animatronics', name: 'The Thing in Floor 13' },
-    { type: 'role', text: 'Blood Effects', name: 'Margaret Wilson' },
-    { type: 'role', text: 'Decay Consultant', name: 'Dr. Edmund Vale' },
-    { type: 'section', text: 'LOCATION MANAGEMENT' },
-    { type: 'role', text: 'Location Scout', name: 'Andrew Davis' },
-    { type: 'role', text: 'Location Manager', name: 'The Elevator' },
-    { type: 'role', text: 'Set Decorator', name: 'Olivia Turner' },
-    { type: 'role', text: 'Elevator Maintenance', name: 'IT STOPPED WORKING' },
-    
-    // Getting very weird (51-80)
+    { type: 'role', text: 'Terrified Elevator Passenger', name: 'YOU' },
+    { type: 'role', text: 'Your Webcam', name: 'Also YOU' },
+    { type: 'role', text: 'Door #1', name: 'The Good Door (just kidding)' },
+    { type: 'role', text: 'Door #2', name: 'The Other Good Door (also kidding)' },
+    { type: 'role', text: 'Door #3', name: 'The REAL Good Door (still lying)' },
+    { type: 'role', text: 'Phone Voice', name: 'Definitely Not a Demon' },
+    { type: 'role', text: 'Blink Monster', name: 'That Guy From Behind You' },
+    { type: 'role', text: 'Cookie', name: 'Innocent Circle (Deceptive)' },
     { type: 'section', text: 'SPECIAL THANKS' },
-    { type: 'role', text: 'Stunt Coordinator', name: 'The Voices' },
-    { type: 'role', text: 'Safety Officer', name: 'THERE IS NO SAFETY' },
-    { type: 'role', text: 'Catering', name: 'Unknown Sustenance' },
-    { type: 'role', text: 'Transportation', name: 'GOING DOWN FOREVER' },
-    { type: 'role', text: 'Phone Operator', name: 'DO NOT ANSWER' },
-    { type: 'role', text: 'Camera Operator B', name: 'WATCHING YOU' },
-    { type: 'section', text: 'MONSTERS & ENTITIES' },
-    { type: 'monster', text: 'Floor 13 Resident', name: 'THE SCREAMER' },
-    { type: 'monster', text: 'Shadow Stalker', name: 'IT FOLLOWS' },
-    { type: 'monster', text: 'Phone Demon', name: 'WRONG NUMBER' },
-    { type: 'monster', text: 'Door Mimic', name: 'CHOOSE WISELY' },
-    { type: 'monster', text: 'Blinking Entity', name: 'DONT CLOSE YOUR EYES' },
-    { type: 'monster', text: 'Red Light Creature', name: 'FREEZE' },
-    { type: 'monster', text: 'Cookie Monster', name: 'NOT THE FUN KIND' },
-    { type: 'monster', text: 'Shooting Gallery Ghosts', name: 'MISSED YOUR SHOT' },
-    { type: 'monster', text: 'Elevator Demon', name: 'GOING DOWN' },
-    { type: 'section', text: 'LOST SOULS' },
-    { type: 'monster', text: 'Previous Passenger #1', name: 'STILL RIDING' },
-    { type: 'monster', text: 'Previous Passenger #2', name: 'NEVER LEFT' },
-    { type: 'monster', text: 'Previous Passenger #3', name: 'HELP ME' },
-    { type: 'monster', text: 'Previous Passenger #4', name: 'IT HURTS' },
-    { type: 'monster', text: 'Previous Passenger #5', name: 'LET ME OUT' },
-    
-    // Corruption begins (81-120)
-    { type: 'section', text: 'W̴̢͕̓A̷̰͒R̴̰̾N̴̪̈́Ḯ̶̫N̶̘̓G̷̱̈́' },
-    { type: 'glitch', text: 'S̸̰̈́y̷̰̑s̴̰͝t̴̰̚ė̵̦m̶̦̈́ ̷̰̾C̸̰̀ö̸́͜r̴̰̓r̴̰͒ṷ̴͒p̴̰̈́t̴̰̚i̵̦͝o̸̦̚n̴̰͝', name: 'D̴̰͝ḛ̴͝ț̵͠ḛ̴͝c̴̰͝t̴̰͝ḛ̴͝d̴̰͝' },
-    { type: 'corrupted', text: 'ERROR_404_REALITY_NOT_FOUND' },
-    { type: 'corrupted', text: 'THE.ELEVATOR.KNOWS' },
-    { type: 'corrupted', text: 'YOU.SHOULD.NOT.HAVE.PLAYED' },
-    { type: 'section', text: 'D̷̢̛͕͐Ȩ̴̛̥͋M̶̢̛̹̈́O̵̡̢̚N̷̪̈́S̶̡̛' },
-    { type: 'monster', text: '01010100 01001000 01000101', name: '01000101 01001110 01000100' },
-    { type: 'monster', text: 'FLOOR_-666', name: 'BASEMENT_ENTITY' },
-    { type: 'monster', text: 'NULL.VOID', name: 'EXISTENCE_ERROR' },
-    { type: 'corrupted', text: '>>> IT.WATCHES <<<' },
-    { type: 'corrupted', text: '>>> IT.LISTENS <<<' },
-    { type: 'corrupted', text: '>>> IT.WAITS <<<' },
-    { type: 'glitch', text: 'T̴̰H̴̰Ḛ̴R̴̰Ḛ̴ ̴̰Ḭ̴S̴̰ ̴̰N̴̰O̴̰ ̴̰Ḛ̴S̴̰C̴̰A̴̰P̴̰Ḛ̴' },
-    { type: 'corrupted', text: 'GOING_DOWN_DOWN_DOWN_DOWN_DOWN' },
-    { type: 'monster', text: 'The Entity That Should Not Be', name: 'IT IS' },
-    { type: 'section', text: '█████ ████ ███████' },
-    { type: 'corrupted', text: 'YOU.CHOSE.THE.WRONG.DOOR' },
-    { type: 'corrupted', text: 'YOU.ANSWERED.THE.PHONE' },
-    { type: 'corrupted', text: 'YOU.BLINKED' },
-    { type: 'corrupted', text: 'YOU.MOVED' },
-    { type: 'corrupted', text: 'YOU.ARE.STILL.HERE' },
-    { type: 'glitch', text: 'W̶̢̅H̸̰̾Y̴̰͝ ̴̰͝A̴̰͠R̴̰͝Ḛ̴͠ ̴̰͝Y̴̰͠O̴̰͝Ṵ̴͠ ̴̰͝S̴̰͠T̴̰͝Ḭ̴͠L̴̰͝L̴̰͠ ̴̰͝H̴̰͠Ḛ̴͝R̴̰͠Ḛ̴͝' },
-    { type: 'monster', text: 'The Passenger List', name: 'YOUR NAME IS ON IT' },
-    { type: 'corrupted', text: 'FLOOR_ERROR' },
-    { type: 'corrupted', text: 'DESTINATION_UNKNOWN' },
-    { type: 'corrupted', text: 'DOORS_OPEN_TO_NOTHING' },
-    
-    // Maximum corruption (121-180)
-    { type: 'section', text: '█̵̛█̴̛█̴̛█̴̛█̴̛ ̵̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛' },
-    { type: 'glitch', text: 'C̴̖͗O̸̦͝N̵̰͝T̴̰͝Ḭ̴͝N̴̰͝Ṵ̴͝Ḛ̴͝?', name: 'Y̵̰͝/̵̰͝N̵̰͝' },
-    { type: 'corrupted', text: 'RESET_IMPOSSIBLE' },
-    { type: 'corrupted', text: 'ESCAPE_DENIED' },
-    { type: 'corrupted', text: 'LOOP_INFINITE' },
-    { type: 'monster', text: 'The Architect', name: 'DESIGNED YOUR FATE' },
-    { type: 'monster', text: 'The Operator', name: 'NEVER STOPS' },
-    { type: 'monster', text: 'The Maintenance', name: 'BROKEN FOREVER' },
-    { type: 'glitch', text: '01110000 01101100 01100101 01100001 01110011 01100101' },
-    { type: 'glitch', text: '01101000 01100101 01101100 01110000' },
-    { type: 'glitch', text: '01101101 01100101' },
-    { type: 'corrupted', text: '>>> SYSTEM.RESTART <<<' },
-    { type: 'corrupted', text: '>>> FAILED <<<' },
-    { type: 'corrupted', text: '>>> FAILED <<<' },
-    { type: 'corrupted', text: '>>> FAILED <<<' },
-    { type: 'section', text: 'F̸̢͓̈́Ḯ̸̦N̶̦͝A̶̦͝L̵̦͝ ̶̦͝C̵̦͝R̶̦͝E̵̦͝D̵̦͝I̶̦͝Ț̵͝Ș̵͝' },
-    { type: 'monster', text: 'Created by', name: 'THE VOID' },
-    { type: 'monster', text: 'Directed by', name: 'YOUR NIGHTMARES' },
-    { type: 'monster', text: 'Written by', name: 'THE DARKNESS' },
-    { type: 'monster', text: 'Starring', name: 'YOU (FOREVER)' },
-    { type: 'glitch', text: 'T̸̰͝H̴̰͝A̵̰͝N̴̰͝K̵̰͝ ̴̰͝Y̸̰͝O̵̰͝Ṵ̴͝ ̵̰͝F̸̰͝O̴̰͝R̵̰͝ ̴̰͝P̸̰͝L̵̰͝A̸̰͝Y̴̰͝Ḭ̵͝N̸̰͝G̵̰͝' },
-    { type: 'corrupted', text: 'PRESS.ANY.KEY.TO.RESTART' },
-    { type: 'corrupted', text: 'JUST.KIDDING' },
-    { type: 'corrupted', text: 'THERE.IS.NO.KEY' },
-    { type: 'corrupted', text: 'THERE.IS.NO.RESTART' },
-    { type: 'corrupted', text: 'THERE.IS.NO.ESCAPE' },
-    { type: 'section', text: '█̵̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛█̴̛' },
-    { type: 'glitch', text: 'T̸H̴E̸ ̴E̸L̴E̸V̴A̸T̴O̸R̴ ̸N̴E̸V̴E̸R̴ ̸S̴T̸O̴P̸S̴' },
-    { type: 'glitch', text: 'I̸T̴ ̸O̴N̸L̴Y̸ ̴G̸O̴E̸S̴ ̸D̴O̸W̴N̸' },
-    { type: 'glitch', text: 'D̸O̴W̸N̴' },
-    { type: 'glitch', text: 'D̸O̴W̸N̴' },
-    { type: 'glitch', text: 'D̸O̴W̸N̴' },
-    { type: 'corrupted', text: 'FLOOR_-∞' },
-    { type: 'corrupted', text: 'YOU.ARE.HERE.FOREVER' },
-    { type: 'corrupted', text: 'WITH.US' },
-    { type: 'corrupted', text: 'ONE.OF.US' },
-    { type: 'corrupted', text: 'ONE.OF.US' },
-    { type: 'corrupted', text: 'ONE.OF.US' },
-    { type: 'monster', text: 'Welcome', name: 'TO ETERNITY' },
-    { type: 'section', text: '░░░░░░░░░░░░░░░░' },
-    { type: 'glitch', text: '▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓' },
-    { type: 'corrupted', text: '████████████████' },
-    { type: 'corrupted', text: '████████████████' },
-    { type: 'corrupted', text: '████████████████' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'glitch', text: 'S̸̰͝Ḛ̵͝Ḛ̴͝ ̸̰͝Y̵̰͝O̴̰͝Ṵ̸͝ ̵̰͝S̴̰͝O̸̰͝O̵̰͝N̴̰͝' },
-    { type: 'corrupted', text: 'VERY.SOON' },
-    { type: 'corrupted', text: 'WHEN.YOU.SLEEP' },
-    { type: 'corrupted', text: 'WHEN.YOU.CLOSE.YOUR.EYES' },
-    { type: 'corrupted', text: 'WE.WILL.BE.THERE' },
-    { type: 'section', text: '...' },
-    { type: 'corrupted', text: 'GOODBYE' },
-    { type: 'corrupted', text: 'FOR.NOW' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'glitch', text: '⬛⬛⬛⬛⬛⬛⬛⬛' },
-    { type: 'corrupted', text: 'END_TRANSMISSION' },
-    { type: 'corrupted', text: 'OR.IS.IT?' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    
-    // More corruption to fill time (170-220)
-    { type: 'section', text: 'T̷̢̛H̴̢̛E̷̢̛ ̴̢̛V̷̢̛Ơ̴̢I̷̢̛D̴̢̛ ̷̢̛S̴̢̛P̷̢̛E̴̢̛A̷̢̛K̴̢̛S̷̢̛' },
-    { type: 'corrupted', text: 'YOU.SHOULD.NOT.HAVE.COME.HERE' },
-    { type: 'corrupted', text: 'THIS.ELEVATOR.IS.YOUR.TOMB' },
-    { type: 'corrupted', text: 'GOING.DOWN.FOREVER' },
-    { type: 'corrupted', text: 'NO.ESCAPE.NO.HOPE.NO.EXIT' },
-    { type: 'glitch', text: 'Y̸O̴U̷.̴A̷R̴E̷.̴T̷R̴A̷P̴P̷E̴D̷' },
-    { type: 'corrupted', text: 'THE.DOORS.WERE.NEVER.REAL' },
-    { type: 'corrupted', text: 'THE.GAMES.WERE.NEVER.FAIR' },
-    { type: 'corrupted', text: 'YOU.WERE.NEVER.MEANT.TO.WIN' },
-    { type: 'monster', text: 'WE.HAVE.BEEN', name: 'WAITING.FOR.YOU' },
-    { type: 'corrupted', text: 'FLOOR_-∞∞∞' },
-    { type: 'glitch', text: 'T̸H̴E̷ ̴E̷L̴E̷V̴A̷T̴O̷R̴ ̷H̴U̷N̴G̷E̴R̷S̴' },
-    { type: 'corrupted', text: 'IT.FEEDS.ON.FEAR' },
-    { type: 'corrupted', text: 'IT.FEEDS.ON.YOU' },
-    { type: 'section', text: 'R̷̢E̴̢M̷̢E̴̢M̷̢B̴̢E̷̢R̴̢' },
-    { type: 'corrupted', text: 'THE.PHONE.CALL' },
-    { type: 'corrupted', text: 'THE.VOICE.IN.THE.DARK' },
-    { type: 'corrupted', text: 'THE.EYES.WATCHING' },
-    { type: 'corrupted', text: 'THE.BREATHING.IN.YOUR.EAR' },
-    { type: 'glitch', text: 'I̸T̴ ̷W̴A̷S̴ ̷A̴L̷L̴ ̷R̴E̷A̴L̷' },
-    { type: 'monster', text: 'AND.NOW', name: 'YOU.BELONG.TO.US' },
-    { type: 'corrupted', text: 'FOREVER.FALLING' },
-    { type: 'corrupted', text: 'FOREVER.SCREAMING' },
-    { type: 'corrupted', text: 'FOREVER.ALONE' },
-    { type: 'glitch', text: 'O̸R̴ ̷A̴R̷E̴ ̷Y̴O̷U̴?' },
-    { type: 'corrupted', text: 'WE.ARE.WITH.YOU' },
-    { type: 'corrupted', text: 'WE.WILL.ALWAYS.BE.WITH.YOU' },
-    { type: 'corrupted', text: 'IN.THE.ELEVATOR' },
-    { type: 'corrupted', text: 'IN.YOUR.DREAMS' },
-    { type: 'corrupted', text: 'IN.THE.SHADOWS' },
-    { type: 'section', text: '█̷̢█̴̢█̷̢█̴̢█̷̢█̴̢█̷̢█̴̢█̷̢' },
-    { type: 'glitch', text: 'D̸O̴N̷T̴.̷L̴O̷O̴K̷.̴B̷E̴H̷I̴N̷D̴.̷Y̴O̷U̴' },
-    { type: 'corrupted', text: 'TOO.LATE' },
-    { type: 'corrupted', text: 'WE.ARE.ALREADY.HERE' },
-    { type: 'monster', text: 'IN.YOUR.ROOM', name: 'RIGHT.NOW' },
-    { type: 'corrupted', text: 'WATCHING.YOU.PLAY' },
-    { type: 'corrupted', text: 'WATCHING.YOU.BREATHE' },
-    { type: 'glitch', text: 'W̸E̴ ̷S̴E̷E̴ ̷Y̴O̷U̴' },
-    { type: 'section', text: 'T̷H̴A̷N̴K̷ ̴Y̷O̴U̷' },
-    { type: 'corrupted', text: 'FOR.PLAYING.OUR.GAME' },
-    { type: 'corrupted', text: 'FOR.FEEDING.US' },
-    { type: 'corrupted', text: 'FOR.BECOMING.ONE.OF.US' },
-    { type: 'glitch', text: 'Y̸O̴U̷ ̴C̷A̴N̷T̴ ̷L̴E̷A̴V̷E̴' },
-    { type: 'corrupted', text: 'THE.GAME.NEVER.ENDS' },
-    { type: 'corrupted', text: 'IT.FOLLOWS.YOU' },
-    { type: 'corrupted', text: 'EVEN.WHEN.YOU.CLOSE.THIS' },
-    { type: 'corrupted', text: 'EVEN.WHEN.YOU.SLEEP' },
-    { type: 'monster', text: 'WE.WILL.SEE.YOU', name: 'IN.YOUR.NIGHTMARES' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' },
-    { type: 'corrupted', text: '.....................' }
+    { type: 'role', text: 'Coffee', name: 'For keeping us awake' },
+    { type: 'role', text: 'Stack Overflow', name: 'For existing' },
+    { type: 'role', text: 'Console.log()', name: 'Our debugging hero' },
+    { type: 'role', text: 'Error Messages', name: 'For being cryptic' },
+    { type: 'role', text: 'The Number 13', name: 'For being spooky' },
+    { type: 'section', text: 'NO THANKS TO' },
+    { type: 'role', text: 'JavaScript', name: 'For weak typing' },
+    { type: 'role', text: 'Async Functions', name: 'For the confusion' },
+    { type: 'role', text: 'Browser Permissions', name: 'For being annoying' },
+    { type: 'role', text: 'Camera API', name: 'For the headaches' },
+    { type: 'role', text: 'Elevator Music', name: 'For getting stuck in our heads' },
+    { type: 'section', text: 'THINGS THAT SCARED US' },
+    { type: 'role', text: 'Production Bugs', name: 'The Real Horror' },
+    { type: 'role', text: 'Merge Conflicts', name: 'Truly Terrifying' },
+    { type: 'role', text: 'Undefined is not a function', name: 'Classic Nightmare' },
+    { type: 'role', text: 'Your Face on Camera', name: 'Sorry, had to' },
+    { type: 'role', text: 'The Deadline', name: 'Coming for us all' },
+    { type: 'section', text: 'THINGS THAT DIDNT WORK' },
+    { type: 'role', text: 'First Attempt at Door Game', name: 'Rest in Peace' },
+    { type: 'role', text: 'Second Attempt at Door Game', name: 'Also RIP' },
+    { type: 'role', text: 'Original Phone Game Concept', name: 'Too Ambitious' },
+    { type: 'role', text: 'That One Feature', name: 'You Know The One' },
+    { type: 'role', text: 'Sleep Schedule', name: 'Long Gone' },
+    { type: 'section', text: 'ANIMALS' },
+    { type: 'role', text: 'No Animals Were Harmed', name: 'But Many Were Scared' },
+    { type: 'role', text: 'Emotional Support Cat', name: 'Judging From Across The Room' },
+    { type: 'role', text: 'Rubber Duck', name: 'Debugging Consultant' },
+    { type: 'section', text: 'LEGAL' },
+    { type: 'role', text: 'Lawyer', name: 'We Could Not Afford One' },
+    { type: 'role', text: 'Copyright', name: 'Probably Fine' },
+    { type: 'role', text: 'Terms of Service', name: 'Nobody Reads These Anyway' },
+    { type: 'role', text: 'Privacy Policy', name: 'Your Webcam Stays Local' },
+    { type: 'section', text: 'INSPIRATIONS' },
+    { type: 'role', text: 'Every Horror Game Ever', name: 'Thanks for the Ideas' },
+    { type: 'role', text: 'Cheap Jump Scares', name: 'Classic Technique' },
+    { type: 'role', text: 'Dark Hallways', name: 'Always Effective' },
+    { type: 'role', text: 'Creepy Phones', name: 'Never Answer' },
+    { type: 'role', text: 'Elevators', name: 'Already Scary' },
+    { type: 'section', text: 'ACHIEVEMENTS' },
+    { type: 'role', text: 'You Survived', name: 'Probably' },
+    { type: 'role', text: 'You Chose A Door', name: 'Bold Move' },
+    { type: 'role', text: 'You Answered The Phone', name: 'Big Mistake' },
+    { type: 'role', text: 'You Blinked', name: 'Should Have Held It' },
+    { type: 'role', text: 'You Traced The Cookie', name: 'Or Tried To' },
+    { type: 'section', text: 'STATS' },
+    { type: 'role', text: 'Lines of Code', name: '4917 (and counting)' },
+    { type: 'role', text: 'Jump Scares', name: 'Too Many To Count' },
+    { type: 'role', text: 'Times We Said This Will Work', name: 'It Did Not Work' },
+    { type: 'role', text: 'Hours Spent Debugging', name: 'All of Them' },
+    { type: 'role', text: 'Times We Scared Ourselves', name: 'Honestly, A Lot' },
+    { type: 'section', text: 'TOOLS USED' },
+    { type: 'role', text: 'JavaScript', name: 'For Better or Worse' },
+    { type: 'role', text: 'HTML5 Canvas', name: 'Drew All The Things' },
+    { type: 'role', text: 'Web Audio API', name: 'Made The Noises' },
+    { type: 'role', text: 'MediaDevices API', name: 'Watched You' },
+    { type: 'role', text: 'CSS', name: 'Made It Pretty (ish)' },
+    { type: 'section', text: 'FINAL THOUGHTS' },
+    { type: 'role', text: 'Did You Enjoy?', name: 'Hope So' },
+    { type: 'role', text: 'Were You Scared?', name: 'Mission Accomplished' },
+    { type: 'role', text: 'Will You Play Again?', name: 'Probably Not' },
+    { type: 'role', text: 'Should You?', name: 'Definitely Not' },
+    { type: 'section', text: 'THANK YOU' },
+    { type: 'role', text: 'Thanks For Playing', name: 'Seriously, Thanks' },
+    { type: 'role', text: 'Hope You Had Fun', name: 'Or At Least Got Spooked' },
+    { type: 'role', text: 'Come Back Soon', name: 'If You Dare' },
+    { type: 'section', text: 'THE END' },
+    { type: 'role', text: '...Or Is It?', name: '(It Is)' },
+    { type: 'role', text: 'No Seriously', name: 'Its Over' },
+    { type: 'role', text: 'You Can Leave Now', name: 'Go On' },
+    { type: 'role', text: 'Still Here?', name: 'Dedicated, Arent You' },
+    { type: 'role', text: 'Fine, One More', name: 'Behind You' },
+    { type: 'role', text: 'Made You Look', name: 'Classic' },
+    { type: 'section', text: 'NOW ITS REALLY OVER' },
+    { type: 'role', text: 'Bye', name: '👋' }
 ];
+
+// Credits variables
 
 // Credits variables
 let creditsActive = false;
@@ -555,21 +441,10 @@ function startElevatorRisingWithFinalCredits() {
     startFinalCredits();
 }
 
-// Start FINAL credits (hysterical style like original)
+// Start FINAL credits (clean, no glitching)
 function startFinalCredits() {
-    console.log('🎬 Starting FINAL hysterical credits...');
+    console.log('🎬 Starting FINAL credits (clean version)...');
     creditsActive = true;
-    
-    // UNMUTE glitch sounds for the credits effects
-    glitchSounds.forEach(sound => {
-        sound.muted = false;
-        sound.volume = 0.7;
-    });
-    
-    // UNMUTE jumpscare sounds for random jumpscares during credits
-    jumpscareSound.muted = false;
-    jumpscareSound2.muted = false;
-    jumpscareSound3.muted = false;
     
     creditsContainer.classList.add('active');
     creditsContainerRight.classList.add('active');
@@ -593,7 +468,7 @@ function startFinalCredits() {
         const creditDiv = document.createElement('div');
         creditDiv.className = 'credit-line';
         
-        // Apply type-specific styling (ORIGINAL STYLE)
+        // Apply type-specific styling
         if (credit.type === 'section') {
             creditDiv.textContent = credit.text;
             creditDiv.style.fontSize = '24px';
@@ -612,235 +487,24 @@ function startFinalCredits() {
                 currentIndex++;
                 return;
             }
-        } else if (credit.type === 'monster') {
-            creditDiv.classList.add('monster');
-            creditDiv.textContent = credit.text;
-            if (credit.name) {
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'credit-line monster';
-                nameDiv.textContent = credit.name;
-                nameDiv.style.fontWeight = 'bold';
-                targetContainer.appendChild(creditDiv);
-                targetContainer.appendChild(nameDiv);
-                currentIndex++;
-                return;
-            }
-        } else if (credit.type === 'glitch') {
-            creditDiv.classList.add('glitch');
-            creditDiv.textContent = credit.text;
-            if (credit.name) {
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'credit-line glitch';
-                nameDiv.textContent = credit.name;
-                targetContainer.appendChild(creditDiv);
-                targetContainer.appendChild(nameDiv);
-                currentIndex++;
-                return;
-            }
-        } else if (credit.type === 'corrupted') {
-            creditDiv.classList.add('corrupted');
-            creditDiv.textContent = credit.text;
         }
         
         targetContainer.appendChild(creditDiv);
         currentIndex++;
     }
     
-    // Add credits every 200ms (EVEN FASTER!)
+    // Add credits every 300ms (smooth pacing)
     const creditInterval = setInterval(() => {
         addCredit();
-        
-        // Start glitching around credit 60 - ENTIRE SCREEN + GLITCH SOUNDS
-        if (currentIndex > 60 && currentIndex < 100 && !document.body.classList.contains('screen-glitching')) {
-            document.body.classList.add('screen-glitching');
-            creditsContainer.classList.add('glitching');
-            creditsContainerRight.classList.add('glitching');
-            console.log('🎬 Starting screen glitch effects!');
-            
-            // Play random glitch sounds every 3-6 seconds (less frequent at first)
-            const glitchSoundInterval = setInterval(() => {
-                const randomGlitch = glitchSounds[Math.floor(Math.random() * glitchSounds.length)];
-                randomGlitch.currentTime = 0;
-                randomGlitch.volume = 0.4 + Math.random() * 0.3; // Vary volume 0.4-0.7
-                randomGlitch.play();
-            }, 3000 + Math.random() * 3000);
-            glitchIntervals.push(glitchSoundInterval);
-            
-            // Subtle visual variations during glitch phase
-            let glitchPhase = 0;
-            const subtleDistortionInterval = setInterval(() => {
-                glitchPhase++;
-                const rand = Math.random();
-                
-                if (rand < 0.3) {
-                    // Quick brightness pulse
-                    document.body.style.filter = 'brightness(1.3)';
-                    setTimeout(() => {
-                        document.body.style.filter = '';
-                    }, 150);
-                } else if (rand < 0.5) {
-                    // Quick desaturation
-                    document.body.style.filter = 'saturate(0.3)';
-                    setTimeout(() => {
-                        document.body.style.filter = '';
-                    }, 200);
-                } else if (rand < 0.65) {
-                    // Quick contrast shift
-                    document.body.style.filter = 'contrast(1.8)';
-                    setTimeout(() => {
-                        document.body.style.filter = '';
-                    }, 100);
-                }
-                // 35% chance: nothing happens (keeps it unpredictable)
-            }, 5000 + Math.random() * 3000);
-            glitchIntervals.push(subtleDistortionInterval);
-        }
-        
-        // Start INTENSE VARIED EFFECTS around credit 100
-        if (currentIndex > 100 && !document.body.classList.contains('screen-flashing')) {
-            document.body.classList.add('screen-flashing');
-            creditsContainer.classList.add('flashing');
-            creditsContainerRight.classList.add('flashing');
-            console.log('🎬 Starting VARIED intense effects + JUMPSCARES!');
-            
-            // Clear previous glitch intervals
-            glitchIntervals.forEach(interval => clearInterval(interval));
-            glitchIntervals = [];
-            
-            // Play glitch sounds MORE frequently during this phase
-            const intenseGlitchInterval = setInterval(() => {
-                const randomGlitch = glitchSounds[Math.floor(Math.random() * glitchSounds.length)];
-                randomGlitch.currentTime = 0;
-                randomGlitch.volume = 0.6 + Math.random() * 0.3;
-                randomGlitch.play();
-            }, 1500 + Math.random() * 2500);
-            glitchIntervals.push(intenseGlitchInterval);
-            
-            // RARE quick jumpscares during this phase (every 10-20 seconds, less predictable!)
-            function scheduleRandomJumpscare() {
-                const delay = 10000 + Math.random() * 10000; // 10-20 seconds
-                const timeout = setTimeout(() => {
-                    // 60% chance to actually show jumpscare (makes it less predictable)
-                    if (Math.random() < 0.6) {
-                        // Show random jumpscare for 80-150ms (varied duration)
-                        const duration = 80 + Math.random() * 70;
-                        const jumpscares = [jumpscare, jumpscare2, jumpscare3];
-                        const randomJumpscare = jumpscares[Math.floor(Math.random() * jumpscares.length)];
-                        randomJumpscare.classList.add('active');
-                        
-                        // Play jumpscare sound
-                        const jumpscaresSounds = [jumpscareSound, jumpscareSound2, jumpscareSound3];
-                        const randomSound = jumpscaresSounds[Math.floor(Math.random() * jumpscaresSounds.length)];
-                        randomSound.currentTime = 0;
-                        randomSound.volume = 0.4;
-                        randomSound.play();
-                        
-                        setTimeout(() => {
-                            randomJumpscare.classList.remove('active');
-                        }, duration);
-                    }
-                    
-                    // Schedule another one
-                    scheduleRandomJumpscare();
-                }, delay);
-                jumpscareTimeouts.push(timeout);
-            }
-            scheduleRandomJumpscare();
-            
-            // CYCLE through MANY different visual effects with MORE VARIATION
-            let effectCycle = 0;
-            const variedEffectsInterval = setInterval(() => {
-                effectCycle++;
-                
-                // 90% color effects, 10% flashbacks (so flashbacks are rare)
-                const isFlashback = Math.random() < 0.1;
-                
-                if (!isFlashback) {
-                    // Choose from color/filter effects only
-                    const effectType = Math.floor(Math.random() * 12); // 12 color effects
-                    
-                    if (effectType === 0) {
-                        // Red tint wave
-                        document.body.style.filter = 'sepia(1) saturate(3) hue-rotate(-50deg)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 500);
-                    } else if (effectType === 1) {
-                        // Desaturate + high contrast
-                        document.body.style.filter = 'saturate(0) contrast(2)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 400);
-                    } else if (effectType === 2) {
-                        // Quick invert
-                        document.body.style.filter = 'invert(1)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 200);
-                    } else if (effectType === 3) {
-                        // Blue/cyan tint
-                        document.body.style.filter = 'hue-rotate(180deg) saturate(2)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 500);
-                    } else if (effectType === 4) {
-                        // Brightness pulse
-                        document.body.style.filter = 'brightness(2)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 250);
-                    } else if (effectType === 5) {
-                        // Darkness wave
-                        document.body.style.filter = 'brightness(0.3) contrast(1.5)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 400);
-                    } else if (effectType === 6) {
-                        // Green/yellow distortion
-                        document.body.style.filter = 'saturate(3) hue-rotate(80deg)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 450);
-                    } else if (effectType === 7) {
-                        // Extreme contrast
-                        document.body.style.filter = 'contrast(3) brightness(1.4)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 300);
-                    } else if (effectType === 8) {
-                        // Purple/magenta tint
-                        document.body.style.filter = 'hue-rotate(280deg) saturate(3)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 450);
-                    } else if (effectType === 9) {
-                        // Orange/sepia corruption
-                        document.body.style.filter = 'sepia(1) saturate(3) hue-rotate(10deg)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 400);
-                    } else if (effectType === 10) {
-                        // Blur pulse
-                        document.body.style.filter = 'blur(4px) brightness(1.3)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 350);
-                    } else {
-                        // Extreme saturation + random rotation
-                        const randomHue = Math.floor(Math.random() * 360);
-                        document.body.style.filter = 'saturate(4) hue-rotate(' + randomHue + 'deg)';
-                        setTimeout(() => { document.body.style.filter = ''; }, 400);
-                    }
-                } else {
-                    // RARE flashback to a game scene
-                    const flashbackType = Math.random() < 0.5 ? 'door' : 'redlight';
-                    
-                    if (flashbackType === 'door') {
-                        doorImageContainer.classList.add('visible');
-                        doorImageContainer.style.opacity = '0.6';
-                        setTimeout(() => { 
-                            doorImageContainer.classList.remove('visible');
-                            doorImageContainer.style.opacity = '1';
-                        }, 200);
-                    } else {
-                        redlightGameContainer.classList.add('active');
-                        redlightGameContainer.style.opacity = '0.5';
-                        setTimeout(() => { 
-                            redlightGameContainer.classList.remove('active');
-                            redlightGameContainer.style.opacity = '1';
-                        }, 250);
-                    }
-                }
-            }, 2000 + Math.random() * 1000); // 2-3 seconds between effects
-            glitchIntervals.push(variedEffectsInterval);
-        }
-    }, 200);
+    }, 300);
     
-    // Auto-scroll credits upward (MUCH faster!)
+    // Auto-scroll credits upward (smooth)
     creditsScrollInterval = setInterval(() => {
         if (creditsContainer.scrollHeight > 0) {
-            creditsContainer.scrollTop += 5; // Much faster scroll
+            creditsContainer.scrollTop += 2; // Smooth scroll
         }
         if (creditsContainerRight.scrollHeight > 0) {
-            creditsContainerRight.scrollTop += 5;
+            creditsContainerRight.scrollTop += 2;
         }
     }, 40);
 }
