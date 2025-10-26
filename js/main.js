@@ -4741,11 +4741,43 @@ function toggleGodModeAutoWin(enabled) {
         if (blinkGameActive) {
             setTimeout(() => { if (godModeAutoWinEnabled) winBlinkGame(); }, 2000);
         } else if (cookieGameActive) {
-            setTimeout(() => { if (godModeAutoWinEnabled) winCookieGame(); }, 2000);
+            setTimeout(() => { if (godModeAutoWinEnabled) cookieGameWin(); }, 2000);
         } else if (redlightGameActive) {
-            setTimeout(() => { if (godModeAutoWinEnabled) winRedLightGame(); }, 2000);
+            setTimeout(() => { 
+                if (godModeAutoWinEnabled) {
+                    // Red light game win logic
+                    stopRecording();
+                    redlightGameActive = false;
+                    clearTimeout(lightSwitchInterval);
+                    redlightMusic.pause();
+                    redlightMusic.currentTime = 0;
+                    keysPressed = {};
+                    lightIndicator.textContent = 'YOU ESCAPED!';
+                    lightIndicator.style.color = '#00ff00';
+                    setTimeout(() => {
+                        redlightGameContainer.classList.remove('active');
+                        continueDoorGame();
+                    }, 1500);
+                }
+            }, 2000);
         } else if (shootingGalleryActive) {
-            setTimeout(() => { if (godModeAutoWinEnabled) winShootingGallery(); }, 2000);
+            setTimeout(() => { 
+                if (godModeAutoWinEnabled) {
+                    // Shooting gallery win logic - complete current stage
+                    stopRecording();
+                    shootingGalleryActive = false;
+                    targetMoveIntervals.forEach(interval => clearInterval(interval));
+                    targetMoveIntervals = [];
+                    targets.forEach(t => t.element.remove());
+                    targets = [];
+                    const crosshair = document.getElementById('crosshair');
+                    if (crosshair) crosshair.remove();
+                    midnightCarouselMusic.pause();
+                    midnightCarouselMusic.currentTime = 0;
+                    shootingGalleryContainer.classList.remove('active');
+                    continueDoorGame();
+                }
+            }, 2000);
         }
     }
 }
@@ -4851,7 +4883,7 @@ async function debugCookieGameInstantWin() {
             horrorMusic.currentTime = 0;
             startCookieGame();
             // Win after 1 second
-            setTimeout(() => winCookieGame(), 1000);
+            setTimeout(() => cookieGameWin(), 1000);
         }, 1500);
     });
 }
