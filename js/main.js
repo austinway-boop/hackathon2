@@ -4262,7 +4262,23 @@ setInterval(function() {
 // Skip to ending sequence
 async function debugSkipToEnding() {
     console.log('🎬 Debug: Skipping to final cut scene with mock recordings...');
-    debugStopAllGames();
+    
+    // Only hide active games, DON'T call debugStopAllGames (it would stop credits)
+    doorGameContainer.classList.remove('active');
+    phoneGameContainer.classList.remove('active');
+    redlightGameContainer.classList.remove('active');
+    shootingGalleryContainer.classList.remove('active');
+    blinkGameContainer.classList.remove('active');
+    cookieGameContainer.classList.remove('active');
+    cameraJumpscare.classList.remove('active');
+    
+    // Stop game music (but not elevator music)
+    horrorMusic.pause();
+    suspenseMusic.pause();
+    midnightCarouselMusic.pause();
+    blinkGameMusic.pause();
+    cookieMusic.pause();
+    redlightMusic.pause();
     
     // Check if we already have recordings
     const hasRecordings = Object.values(gameRecordings).some(r => r !== null);
