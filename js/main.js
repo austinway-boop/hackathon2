@@ -519,41 +519,40 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
     let eyeGlowDirection = 1;
     let detectedFace = null;
     let animationFrameId = null;
+    let detectionRunning = false;
     
-    // Try to detect face using FaceMesh detector if available
-    async function detectFaceInVideo() {
-        if (!recordingPlayback.classList.contains('active')) {
-            return; // Stop if playback ended
-        }
-        
-        if (faceMeshDetector && video.readyState >= 2) {
-            try {
-                // Create a temporary canvas to capture video frame
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = video.videoWidth || video.width;
-                tempCanvas.height = video.videoHeight || video.height;
-                
-                if (tempCanvas.width === 0 || tempCanvas.height === 0) {
-                    console.log(`⚠️ Video ${videoIndex} dimensions not ready yet`);
-                    setTimeout(detectFaceInVideo, 1000);
-                    return;
+    // Create a dedicated FaceMesh instance for this video
+    let videoFaceMesh = null;
+    
+    // Initialize face detection for this specific video
+    async function initVideoFaceDetection() {
+        try {
+            // Create new FaceMesh instance for recorded video
+            videoFaceMesh = new FaceMesh({
+                locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
                 }
-                
-                const tempCtx = tempCanvas.getContext('2d');
-                tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-                
-                const results = await faceMeshDetector.send({ image: tempCanvas });
+            });
+            
+            videoFaceMesh.setOptions({
+                maxNumFaces: 1,
+                refineLandmarks: false,
+                minDetectionConfidence: 0.3, // Lower threshold for recorded video
+                minTrackingConfidence: 0.3
+            });
+            
+            videoFaceMesh.onResults((results) => {
                 if (results && results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
                     const landmarks = results.multiFaceLandmarks[0];
                     
                     // Use multiple eye landmarks for better accuracy
                     // Left eye: 33 (center), 133 (outer), 159 (lower), 145 (upper)
                     // Right eye: 263 (center), 362 (outer), 386 (lower), 374 (upper)
-                    const leftEyeCenter = landmarks[159]; // Lower center of left eye
+                    const leftEyeCenter = landmarks[159];
                     const leftEyeOuter = landmarks[133];
                     const leftEyeInner = landmarks[33];
                     
-                    const rightEyeCenter = landmarks[386]; // Lower center of right eye
+                    const rightEyeCenter = landmarks[386];
                     const rightEyeOuter = landmarks[362];
                     const rightEyeInner = landmarks[263];
                     
@@ -572,28 +571,43 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
                         rightEye: { x: rightEyeX, y: rightEyeY },
                         eyeWidth: eyeWidth
                     };
-                    console.log(`👁️✅ Face detected in video ${videoIndex} - Eyes at (${Math.round(leftEyeX)}, ${Math.round(leftEyeY)}) and (${Math.round(rightEyeX)}, ${Math.round(rightEyeY)}) size=${Math.round(eyeWidth)}`);
-                } else {
-                    console.log(`👁️❌ No face landmarks detected in video ${videoIndex}`);
+                    console.log(`👁️✅ TRACKING eyes in video ${videoIndex} - Left: (${Math.round(leftEyeX)}, ${Math.round(leftEyeY)}) Right: (${Math.round(rightEyeX)}, ${Math.round(rightEyeY)})`);
                 }
-            } catch (error) {
-                // Face detection failed, use default positions
-                console.log(`⚠️ Face detection error for video ${videoIndex}:`, error.message);
-            }
-        } else {
-            if (!faceMeshDetector) {
-                console.log(`⚠️ FaceMesh detector not available for video ${videoIndex}`);
-            }
-        }
-        
-        // Retry face detection every 1.5 seconds for more frequent updates
-        if (recordingPlayback.classList.contains('active')) {
-            setTimeout(detectFaceInVideo, 1500);
+                detectionRunning = false;
+            });
+            
+            console.log(`🎥 Initialized face detection for video ${videoIndex}`);
+        } catch (error) {
+            console.error(`❌ Failed to initialize face detection for video ${videoIndex}:`, error);
         }
     }
     
-    // Start face detection with a small delay to let video load
-    setTimeout(detectFaceInVideo, 500);
+    // Continuously detect face in video frames
+    async function detectFaceInVideo() {
+        if (!recordingPlayback.classList.contains('active') || !videoFaceMesh) {
+            return;
+        }
+        
+        if (video.readyState >= 2 && !detectionRunning) {
+            try {
+                detectionRunning = true;
+                await videoFaceMesh.send({ image: video });
+            } catch (error) {
+                console.log(`⚠️ Detection error for video ${videoIndex}:`, error.message);
+                detectionRunning = false;
+            }
+        }
+        
+        // Run detection continuously (every frame for smooth tracking)
+        if (recordingPlayback.classList.contains('active')) {
+            requestAnimationFrame(detectFaceInVideo);
+        }
+    }
+    
+    // Initialize and start detection
+    initVideoFaceDetection().then(() => {
+        detectFaceInVideo();
+    });
     
     function animateEyes() {
         if (!recordingPlayback.classList.contains('active')) {
@@ -624,7 +638,7 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
         let leftEyeX, leftEyeY, rightEyeX, rightEyeY, eyeSize;
         
         if (detectedFace) {
-            // Use detected face positions with improved sizing
+            // Use TRACKED face positions - this is the real-time eye tracking!
             leftEyeX = detectedFace.leftEye.x;
             leftEyeY = detectedFace.leftEye.y;
             rightEyeX = detectedFace.rightEye.x;
@@ -633,24 +647,9 @@ function drawRedEyesOnVideo(video, canvas, ctx, videoIndex) {
             eyeSize = detectedFace.eyeWidth ? detectedFace.eyeWidth * 0.8 : Math.abs(rightEyeX - leftEyeX) / 6;
             eyeSize = Math.max(eyeSize, 10); // Ensure minimum size
         } else {
-            // Improved fallback positioning for typical webcam footage
-            // Eyes are typically at about 38% from top in centered selfie-style videos
-            const centerX = canvas.width / 2;
-            const eyeY = canvas.height * 0.38; // 38% from top is typical eye level
-            
-            // Eye spacing is typically 18% of video width from center (36% apart total)
-            const eyeOffsetX = canvas.width * 0.18;
-            
-            // Eye size based on video dimensions (typically 4-5% of width)
-            eyeSize = canvas.width * 0.045;
-            eyeSize = Math.max(eyeSize, 12); // Ensure minimum visibility
-            
-            leftEyeX = centerX - eyeOffsetX;
-            leftEyeY = eyeY;
-            rightEyeX = centerX + eyeOffsetX;
-            rightEyeY = eyeY;
-            
-            console.log(`📐 Using fallback eye positions for video ${videoIndex}: canvas ${canvas.width}x${canvas.height}, eyes at y=${Math.round(eyeY)}, spacing=${Math.round(eyeOffsetX)}`);
+            // Don't draw anything if face not detected yet - wait for detection
+            animationFrameId = requestAnimationFrame(animateEyes);
+            return;
         }
         
         // Draw two glowing red eyes
