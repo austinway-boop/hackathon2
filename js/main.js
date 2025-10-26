@@ -506,9 +506,9 @@ function finalJumpscare() {
     }, 1500);
 }
 
-// Start elevator RISING with FINAL credits
+// Start elevator with FINAL credits (elevator stays on screen)
 function startElevatorRisingWithFinalCredits() {
-    console.log('🛗 Elevator RISING with final credits...');
+    console.log('🛗 Showing elevator with final credits...');
     
     // Stop all sounds
     endScaryDialog.pause();
@@ -526,23 +526,11 @@ function startElevatorRisingWithFinalCredits() {
     cookieGameContainer.classList.remove('active');
     recordingPlayback.classList.remove('active');
     
-    // Show elevator RISING (moving UP, not down)
+    // Show elevator (stays in place, doesn't rise)
     elevatorContainer.style.display = 'block';
     elevatorContainer.style.top = '50%';
-    elevatorContainer.classList.remove('shaking', 'hidden');
-    
-    // Animate elevator RISING (going UP)
-    let currentTop = 50; // Start at 50%
-    const riseInterval = setInterval(() => {
-        currentTop -= 0.5; // Move UP slowly
-        elevatorContainer.style.top = currentTop + '%';
-        
-        // Once it goes off screen, we can stop
-        if (currentTop < -50) {
-            clearInterval(riseInterval);
-            elevatorContainer.style.display = 'none';
-        }
-    }, 50);
+    elevatorContainer.classList.add('shaking'); // Keep it shaking like normal
+    elevatorContainer.classList.remove('hidden');
     
     // Play elevator music during credits
     audioPlayer.currentTime = 0;
@@ -551,38 +539,28 @@ function startElevatorRisingWithFinalCredits() {
     audioPlayer.play();
     console.log('🎵 Playing elevator music during final credits');
     
-    // Show background moving UP
+    // Show background moving
     backgroundTexture.classList.add('visible', 'moving');
     
-    // Start REAL final credits (not the looping monster credits)
+    // Start REAL final credits (hysterical style)
     startFinalCredits();
 }
 
-// Start FINAL credits (the real ending credits)
+// Start FINAL credits (hysterical style like original)
 function startFinalCredits() {
-    console.log('🎬 Starting FINAL credits...');
-    
-    // Clear any screen effects
-    document.body.classList.remove('screen-glitching', 'screen-flashing');
-    document.body.style.filter = '';
-    
-    // Show credits on both sides like the original
+    console.log('🎬 Starting FINAL hysterical credits...');
+    creditsActive = true;
     creditsContainer.classList.add('active');
-    creditsContainer.classList.remove('glitching', 'flashing');
     creditsContainerRight.classList.add('active');
-    creditsContainerRight.classList.remove('glitching', 'flashing');
-    creditsContainer.innerHTML = '';
+    creditsContainer.innerHTML = ''; // Clear any existing content
     creditsContainerRight.innerHTML = '';
-    creditsContainer.style.display = 'flex';
-    creditsContainerRight.style.display = 'flex';
     
     let currentIndex = 0;
     
     // Function to add a single credit (alternates left/right)
     function addCredit() {
         if (currentIndex >= CREDITS.length) {
-            console.log('🎬 All credits shown! THE END');
-            return; // All credits shown - proper ending
+            return; // All credits shown
         }
         
         const credit = CREDITS[currentIndex];
@@ -592,84 +570,260 @@ function startFinalCredits() {
         const creditDiv = document.createElement('div');
         creditDiv.className = 'credit-line';
         
-        // Apply type-specific styling
+        // Apply type-specific styling (ORIGINAL STYLE)
         if (credit.type === 'section') {
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '28px';
+            creditDiv.style.fontSize = '24px';
             creditDiv.style.fontWeight = 'bold';
-            creditDiv.style.marginTop = '50px';
-            creditDiv.style.color = '#fff';
+            creditDiv.style.marginTop = '40px';
         } else if (credit.type === 'role') {
             creditDiv.className = 'credit-line role';
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '18px';
-            creditDiv.style.color = '#aaa';
             if (credit.name) {
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'credit-line role';
                 nameDiv.textContent = credit.name;
                 nameDiv.style.fontWeight = 'bold';
-                nameDiv.style.fontSize = '20px';
-                nameDiv.style.color = '#fff';
-                nameDiv.style.marginBottom = '15px';
                 targetContainer.appendChild(creditDiv);
                 targetContainer.appendChild(nameDiv);
                 currentIndex++;
                 return;
             }
         } else if (credit.type === 'monster') {
-            creditDiv.className = 'credit-line monster';
+            creditDiv.classList.add('monster');
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '18px';
             if (credit.name) {
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'credit-line monster';
                 nameDiv.textContent = credit.name;
                 nameDiv.style.fontWeight = 'bold';
-                nameDiv.style.fontSize = '20px';
-                nameDiv.style.marginBottom = '15px';
                 targetContainer.appendChild(creditDiv);
                 targetContainer.appendChild(nameDiv);
                 currentIndex++;
                 return;
             }
         } else if (credit.type === 'glitch') {
-            creditDiv.className = 'credit-line glitch';
+            creditDiv.classList.add('glitch');
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '22px';
+            if (credit.name) {
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'credit-line glitch';
+                nameDiv.textContent = credit.name;
+                targetContainer.appendChild(creditDiv);
+                targetContainer.appendChild(nameDiv);
+                currentIndex++;
+                return;
+            }
         } else if (credit.type === 'corrupted') {
-            creditDiv.className = 'credit-line corrupted';
+            creditDiv.classList.add('corrupted');
             creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '22px';
-        } else {
-            // Normal credit
-            creditDiv.textContent = credit.text;
-            creditDiv.style.fontSize = '18px';
-            creditDiv.style.color = '#ccc';
         }
         
         targetContainer.appendChild(creditDiv);
         currentIndex++;
     }
     
-    // Add credits every 200ms
+    // Add credits every 200ms (EVEN FASTER!)
     const creditInterval = setInterval(() => {
         addCredit();
         
-        // Stop when all credits are shown
+        // Start glitching around credit 60 - ENTIRE SCREEN + GLITCH SOUNDS
+        if (currentIndex > 60 && currentIndex < 100 && !document.body.classList.contains('screen-glitching')) {
+            document.body.classList.add('screen-glitching');
+            creditsContainer.classList.add('glitching');
+            creditsContainerRight.classList.add('glitching');
+            console.log('🎬 Starting screen glitch effects!');
+            
+            // Play random glitch sounds every 3-6 seconds (less frequent at first)
+            const glitchSoundInterval = setInterval(() => {
+                const randomGlitch = glitchSounds[Math.floor(Math.random() * glitchSounds.length)];
+                randomGlitch.currentTime = 0;
+                randomGlitch.volume = 0.4 + Math.random() * 0.3; // Vary volume 0.4-0.7
+                randomGlitch.play();
+            }, 3000 + Math.random() * 3000);
+            glitchIntervals.push(glitchSoundInterval);
+            
+            // Subtle visual variations during glitch phase
+            let glitchPhase = 0;
+            const subtleDistortionInterval = setInterval(() => {
+                glitchPhase++;
+                const rand = Math.random();
+                
+                if (rand < 0.3) {
+                    // Quick brightness pulse
+                    document.body.style.filter = 'brightness(1.3)';
+                    setTimeout(() => {
+                        document.body.style.filter = '';
+                    }, 150);
+                } else if (rand < 0.5) {
+                    // Quick desaturation
+                    document.body.style.filter = 'saturate(0.3)';
+                    setTimeout(() => {
+                        document.body.style.filter = '';
+                    }, 200);
+                } else if (rand < 0.65) {
+                    // Quick contrast shift
+                    document.body.style.filter = 'contrast(1.8)';
+                    setTimeout(() => {
+                        document.body.style.filter = '';
+                    }, 100);
+                }
+                // 35% chance: nothing happens (keeps it unpredictable)
+            }, 5000 + Math.random() * 3000);
+            glitchIntervals.push(subtleDistortionInterval);
+        }
+        
+        // Start INTENSE VARIED EFFECTS around credit 100
+        if (currentIndex > 100 && !document.body.classList.contains('screen-flashing')) {
+            document.body.classList.add('screen-flashing');
+            creditsContainer.classList.add('flashing');
+            creditsContainerRight.classList.add('flashing');
+            console.log('🎬 Starting VARIED intense effects + JUMPSCARES!');
+            
+            // Clear previous glitch intervals
+            glitchIntervals.forEach(interval => clearInterval(interval));
+            glitchIntervals = [];
+            
+            // Play glitch sounds MORE frequently during this phase
+            const intenseGlitchInterval = setInterval(() => {
+                const randomGlitch = glitchSounds[Math.floor(Math.random() * glitchSounds.length)];
+                randomGlitch.currentTime = 0;
+                randomGlitch.volume = 0.6 + Math.random() * 0.3;
+                randomGlitch.play();
+            }, 1500 + Math.random() * 2500);
+            glitchIntervals.push(intenseGlitchInterval);
+            
+            // RARE quick jumpscares during this phase (every 10-20 seconds, less predictable!)
+            function scheduleRandomJumpscare() {
+                const delay = 10000 + Math.random() * 10000; // 10-20 seconds
+                const timeout = setTimeout(() => {
+                    // 60% chance to actually show jumpscare (makes it less predictable)
+                    if (Math.random() < 0.6) {
+                        // Show random jumpscare for 80-150ms (varied duration)
+                        const duration = 80 + Math.random() * 70;
+                        const jumpscares = [jumpscare, jumpscare2, jumpscare3];
+                        const randomJumpscare = jumpscares[Math.floor(Math.random() * jumpscares.length)];
+                        randomJumpscare.classList.add('active');
+                        
+                        // Play jumpscare sound
+                        const jumpscaresSounds = [jumpscareSound, jumpscareSound2, jumpscareSound3];
+                        const randomSound = jumpscaresSounds[Math.floor(Math.random() * jumpscaresSounds.length)];
+                        randomSound.currentTime = 0;
+                        randomSound.volume = 0.4;
+                        randomSound.play();
+                        
+                        setTimeout(() => {
+                            randomJumpscare.classList.remove('active');
+                        }, duration);
+                    }
+                    
+                    // Schedule another one
+                    scheduleRandomJumpscare();
+                }, delay);
+                jumpscareTimeouts.push(timeout);
+            }
+            scheduleRandomJumpscare();
+            
+            // CYCLE through MANY different visual effects with MORE VARIATION
+            let effectCycle = 0;
+            const variedEffectsInterval = setInterval(() => {
+                effectCycle++;
+                
+                // 90% color effects, 10% flashbacks (so flashbacks are rare)
+                const isFlashback = Math.random() < 0.1;
+                
+                if (!isFlashback) {
+                    // Choose from color/filter effects only
+                    const effectType = Math.floor(Math.random() * 12); // 12 color effects
+                    
+                    if (effectType === 0) {
+                        // Red tint wave
+                        document.body.style.filter = 'sepia(1) saturate(3) hue-rotate(-50deg)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 500);
+                    } else if (effectType === 1) {
+                        // Desaturate + high contrast
+                        document.body.style.filter = 'saturate(0) contrast(2)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 400);
+                    } else if (effectType === 2) {
+                        // Quick invert
+                        document.body.style.filter = 'invert(1)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 200);
+                    } else if (effectType === 3) {
+                        // Blue/cyan tint
+                        document.body.style.filter = 'hue-rotate(180deg) saturate(2)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 500);
+                    } else if (effectType === 4) {
+                        // Brightness pulse
+                        document.body.style.filter = 'brightness(2)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 250);
+                    } else if (effectType === 5) {
+                        // Darkness wave
+                        document.body.style.filter = 'brightness(0.3) contrast(1.5)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 400);
+                    } else if (effectType === 6) {
+                        // Green/yellow distortion
+                        document.body.style.filter = 'saturate(3) hue-rotate(80deg)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 450);
+                    } else if (effectType === 7) {
+                        // Extreme contrast
+                        document.body.style.filter = 'contrast(3) brightness(1.4)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 300);
+                    } else if (effectType === 8) {
+                        // Purple/magenta tint
+                        document.body.style.filter = 'hue-rotate(280deg) saturate(3)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 450);
+                    } else if (effectType === 9) {
+                        // Orange/sepia corruption
+                        document.body.style.filter = 'sepia(1) saturate(3) hue-rotate(10deg)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 400);
+                    } else if (effectType === 10) {
+                        // Blur pulse
+                        document.body.style.filter = 'blur(4px) brightness(1.3)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 350);
+                    } else {
+                        // Extreme saturation + random rotation
+                        const randomHue = Math.floor(Math.random() * 360);
+                        document.body.style.filter = 'saturate(4) hue-rotate(' + randomHue + 'deg)';
+                        setTimeout(() => { document.body.style.filter = ''; }, 400);
+                    }
+                } else {
+                    // RARE flashback to a game scene
+                    const flashbackType = Math.random() < 0.5 ? 'door' : 'redlight';
+                    
+                    if (flashbackType === 'door') {
+                        doorImageContainer.classList.add('visible');
+                        doorImageContainer.style.opacity = '0.6';
+                        setTimeout(() => { 
+                            doorImageContainer.classList.remove('visible');
+                            doorImageContainer.style.opacity = '1';
+                        }, 200);
+                    } else {
+                        redlightGameContainer.classList.add('active');
+                        redlightGameContainer.style.opacity = '0.5';
+                        setTimeout(() => { 
+                            redlightGameContainer.classList.remove('active');
+                            redlightGameContainer.style.opacity = '1';
+                        }, 250);
+                    }
+                }
+            }, 2000 + Math.random() * 1000); // 2-3 seconds between effects
+            glitchIntervals.push(variedEffectsInterval);
+        }
+        
+        // Stop when all credits are shown (music will keep playing)
         if (currentIndex >= CREDITS.length) {
             clearInterval(creditInterval);
-            console.log('🎬 All credits complete! Game truly ended.');
+            console.log('🎬 All credits shown! THE END');
         }
     }, 200);
     
-    // Auto-scroll credits upward
-    const scrollInterval = setInterval(() => {
+    // Auto-scroll credits upward (MUCH faster!)
+    creditsScrollInterval = setInterval(() => {
         if (creditsContainer.scrollHeight > 0) {
-            creditsContainer.scrollTop += 3;
+            creditsContainer.scrollTop += 5; // Much faster scroll
         }
         if (creditsContainerRight.scrollHeight > 0) {
-            creditsContainerRight.scrollTop += 3;
+            creditsContainerRight.scrollTop += 5;
         }
     }, 40);
 }
