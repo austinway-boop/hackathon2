@@ -18,6 +18,134 @@ body {
     padding: 0;
 }
 
+/* Warning Screen Styles */
+.warning-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a0000 0%, #000000 50%, #1a0000 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.warning-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.warning-content {
+    max-width: 700px;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 3px solid #ff0000;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(255, 0, 0, 0.5), inset 0 0 30px rgba(255, 0, 0, 0.1);
+    animation: pulseWarning 2s ease-in-out infinite;
+}
+
+@keyframes pulseWarning {
+    0%, 100% {
+        box-shadow: 0 0 50px rgba(255, 0, 0, 0.5), inset 0 0 30px rgba(255, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 80px rgba(255, 0, 0, 0.8), inset 0 0 50px rgba(255, 0, 0, 0.2);
+    }
+}
+
+.warning-title {
+    color: #ff0000;
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.warning-text {
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.warning-text strong {
+    color: #ff6666;
+    font-size: 20px;
+}
+
+.warning-text ul {
+    list-style: none;
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+.warning-text li {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 3px solid #ff0000;
+    transition: background 0.3s;
+}
+
+.warning-text li:hover {
+    background: rgba(255, 0, 0, 0.2);
+}
+
+.warning-disclaimer {
+    background: rgba(255, 255, 0, 0.1);
+    border: 2px solid #ffcc00;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    color: #ffcc00;
+    font-weight: bold;
+    text-align: center;
+}
+
+.warning-instructions {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(0, 100, 255, 0.1);
+    border: 2px solid #0066ff;
+    border-radius: 5px;
+}
+
+.warning-instructions strong {
+    color: #66b3ff;
+}
+
+.warning-button {
+    width: 100%;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+    border: 3px solid #ff0000;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+.warning-button:hover {
+    background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+    transform: scale(1.05);
+}
+
+.warning-button:active {
+    transform: scale(0.98);
+}
+
 .background-texture {
     position: fixed;
     top: 0;

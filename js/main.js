@@ -2612,6 +2612,34 @@ playButton.addEventListener('mouseenter', function() {
     }
 });
 
+// Warning Screen Handler
+const warningScreen = document.getElementById('warningScreen');
+const acceptWarningButton = document.getElementById('acceptWarningButton');
+
+acceptWarningButton.addEventListener('click', async function() {
+    // Enter fullscreen mode
+    try {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            await elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { // Safari
+            await elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { // IE11
+            await elem.msRequestFullscreen();
+        }
+    } catch (err) {
+        console.log('Fullscreen request failed:', err);
+    }
+    
+    // Hide warning screen with fade out
+    warningScreen.classList.add('hidden');
+    
+    // Remove warning screen completely after transition
+    setTimeout(() => {
+        warningScreen.style.display = 'none';
+    }, 500);
+});
+
 // When clicking start, trigger jumpscare first!
 startButton.addEventListener('click', async function() {
     // Request camera access
