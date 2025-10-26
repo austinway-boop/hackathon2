@@ -526,11 +526,18 @@ function startElevatorRisingWithFinalCredits() {
     cookieGameContainer.classList.remove('active');
     recordingPlayback.classList.remove('active');
     
+    // Hide start/play buttons (prevent them from showing)
+    startButton.classList.add('hidden');
+    playButton.classList.add('hidden');
+    openDoorButton.classList.add('hidden');
+    
     // Show elevator (stays in place, doesn't rise)
     elevatorContainer.style.display = 'block';
     elevatorContainer.style.top = '50%';
+    elevatorContainer.style.visibility = 'visible';
     elevatorContainer.classList.add('shaking'); // Keep it shaking like normal
-    elevatorContainer.classList.remove('hidden');
+    elevatorContainer.classList.remove('hidden', 'frozen');
+    console.log('🛗 Elevator displayed at 50%, shaking');
     
     // Play elevator music during credits
     audioPlayer.currentTime = 0;
@@ -541,8 +548,10 @@ function startElevatorRisingWithFinalCredits() {
     
     // Show background moving
     backgroundTexture.classList.add('visible', 'moving');
+    console.log('🌫️ Background texture visible and moving');
     
     // Start REAL final credits (hysterical style)
+    console.log('🎬 About to call startFinalCredits()...');
     startFinalCredits();
 }
 
@@ -550,6 +559,18 @@ function startElevatorRisingWithFinalCredits() {
 function startFinalCredits() {
     console.log('🎬 Starting FINAL hysterical credits...');
     creditsActive = true;
+    
+    // UNMUTE glitch sounds for the credits effects
+    glitchSounds.forEach(sound => {
+        sound.muted = false;
+        sound.volume = 0.7;
+    });
+    
+    // UNMUTE jumpscare sounds for random jumpscares during credits
+    jumpscareSound.muted = false;
+    jumpscareSound2.muted = false;
+    jumpscareSound3.muted = false;
+    
     creditsContainer.classList.add('active');
     creditsContainerRight.classList.add('active');
     creditsContainer.innerHTML = ''; // Clear any existing content
@@ -559,8 +580,10 @@ function startFinalCredits() {
     
     // Function to add a single credit (alternates left/right)
     function addCredit() {
+        // Loop back to start if we've shown all credits - INFINITE LOOP
         if (currentIndex >= CREDITS.length) {
-            return; // All credits shown
+            console.log('🎬 Credits finished, LOOPING back to start...');
+            currentIndex = 0;
         }
         
         const credit = CREDITS[currentIndex];
@@ -808,12 +831,6 @@ function startFinalCredits() {
                 }
             }, 2000 + Math.random() * 1000); // 2-3 seconds between effects
             glitchIntervals.push(variedEffectsInterval);
-        }
-        
-        // Stop when all credits are shown (music will keep playing)
-        if (currentIndex >= CREDITS.length) {
-            clearInterval(creditInterval);
-            console.log('🎬 All credits shown! THE END');
         }
     }, 200);
     
@@ -2262,8 +2279,9 @@ function startCredits() {
     
     // Function to add a single credit (alternates left/right)
     function addCredit() {
+        // Loop back to start if we've shown all credits
         if (currentIndex >= CREDITS.length) {
-            return; // All credits shown
+            currentIndex = 0;
         }
         
         const credit = CREDITS[currentIndex];
