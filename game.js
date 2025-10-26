@@ -2293,7 +2293,43 @@ const warningScreen = document.getElementById('warningScreen');
 const acceptWarningButton = document.getElementById('acceptWarningButton');
 
 acceptWarningButton.addEventListener('click', async function() {
-    // Enter fullscreen mode
+    // Disable button to prevent multiple clicks
+    acceptWarningButton.disabled = true;
+    acceptWarningButton.textContent = 'REQUESTING CAMERA ACCESS...';
+    
+    // Request camera access FIRST - this is required!
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: true, 
+            audio: false 
+        });
+        
+        // Camera access granted! Store the stream
+        console.log('Camera access granted');
+        
+        // Stop the test stream (we'll request it again later when needed)
+        stream.getTracks().forEach(track => track.stop());
+        
+    } catch (err) {
+        // Camera access DENIED - show error and don't proceed
+        console.error('Camera access denied:', err);
+        acceptWarningButton.disabled = false;
+        acceptWarningButton.textContent = '❌ CAMERA ACCESS REQUIRED - TRY AGAIN';
+        acceptWarningButton.style.background = 'linear-gradient(135deg, #cc0000 0%, #990000 100%)';
+        
+        // Show error message
+        alert('⚠️ Camera access is REQUIRED to play this game!\n\nPlease click "Allow" when your browser asks for camera permission.\n\nThe game uses your camera for interactive horror elements.');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            acceptWarningButton.textContent = 'I UNDERSTAND - ENTER GAME';
+            acceptWarningButton.style.background = 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)';
+        }, 2000);
+        
+        return; // Don't proceed without camera access
+    }
+    
+    // Camera access granted - now enter fullscreen mode
     try {
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
@@ -2305,14 +2341,20 @@ acceptWarningButton.addEventListener('click', async function() {
         }
     } catch (err) {
         console.log('Fullscreen request failed:', err);
+        // Fullscreen is not critical, continue anyway
     }
     
-    // Hide warning screen with fade out
-    warningScreen.classList.add('hidden');
+    // Success! Hide warning screen with fade out
+    acceptWarningButton.textContent = '✓ ACCESS GRANTED - LOADING...';
+    acceptWarningButton.style.background = 'linear-gradient(135deg, #00cc00 0%, #009900 100%)';
     
-    // Remove warning screen completely after transition
     setTimeout(() => {
-        warningScreen.style.display = 'none';
+        warningScreen.classList.add('hidden');
+        
+        // Remove warning screen completely after transition
+        setTimeout(() => {
+            warningScreen.style.display = 'none';
+        }, 500);
     }, 500);
 });
 
