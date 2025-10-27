@@ -4021,15 +4021,16 @@ function isDarkPixel(r, g, b, a) {
 
 // Preload cookie image
 function preloadCookieImages() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         cookieImage = new Image();
         cookieImage.onload = () => {
-            console.log('✅ Cookie.png loaded successfully');
-            resolve();
+            console.log('✅ Cookie.png loaded successfully', cookieImage.width, 'x', cookieImage.height);
+            resolve(true);
         };
         cookieImage.onerror = () => {
             console.error('❌ Failed to load Cookie.png');
-            resolve(); // Resolve anyway to prevent hanging
+            cookieImage = null;
+            reject(new Error('Failed to load Cookie.png'));
         };
         cookieImage.src = 'Cookie.png';
     });
@@ -4040,91 +4041,138 @@ async function startCookieGame() {
     console.log('🍪 Starting cookie tracing game...');
     console.log('🎨 Detection Settings:', COOKIE_DETECTION_SETTINGS);
     
-    // Ensure camera is ready
-    await requestCameraAccess();
-    
-    // Load image if not already loaded
-    if (!cookieImage) {
-        console.log('⏳ Loading Cookie.png...');
-        await preloadCookieImages();
-    }
-    
-    cookieGameActive = true;
-    cookieTimeLeft = 60;
-    hasFailedCookie = false;
-    traceProgress = 0;
-    tracedPixels.clear();
-    lastPercentage = 0;
-    isDrawing = false;
-    
-    // Start recording cookie game
-    startRecording('cookie');
-    
-    // Show game container
-    cookieGameContainer.classList.add('active');
-    
-    // Start cookie music
-    cookieMusic.currentTime = 0;
-    cookieMusic.play();
-    console.log('🎵 Cookie music started!');
-    
-    // Setup canvas dimensions based on cookie image
-    const maxWidth = window.innerWidth * 0.9;
-    const maxHeight = window.innerHeight * 0.8;
-    const scale = Math.min(maxWidth / cookieImage.width, maxHeight / cookieImage.height);
-    
-    cookieCanvas.width = cookieImage.width * scale;
-    cookieCanvas.height = cookieImage.height * scale;
-    
-    // Draw initial cookie (NO GREEN OVERLAY)
-    cookieCtx.clearRect(0, 0, cookieCanvas.width, cookieCanvas.height);
-    cookieCtx.drawImage(cookieImage, 0, 0, cookieCanvas.width, cookieCanvas.height);
-    
-    console.log('✅ Cookie drawn on canvas (no overlay)');
-    
-    // Create an offscreen canvas to analyze the DARK LINES on the COOKIE
-    const linesCanvas = document.createElement('canvas');
-    linesCanvas.width = cookieImage.width;
-    linesCanvas.height = cookieImage.height;
-    const linesCtx = linesCanvas.getContext('2d');
-    linesCtx.drawImage(cookieImage, 0, 0);
-    cookieLinesData = linesCtx.getImageData(0, 0, linesCanvas.width, linesCanvas.height);
-    
-    // Count total dark pixels in the cookie
-    totalDarkPixels = 0;
-    for (let y = 0; y < cookieLinesData.height; y++) {
-        for (let x = 0; x < cookieLinesData.width; x++) {
-            const index = (y * cookieLinesData.width + x) * 4;
-            const r = cookieLinesData.data[index];
-            const g = cookieLinesData.data[index + 1];
-            const b = cookieLinesData.data[index + 2];
-            const a = cookieLinesData.data[index + 3];
-            const brightness = (r + g + b) / 3;
-            
-            if (isDarkPixel(r, g, b, a)) {
-                totalDarkPixels++;
+    try {
+        // Ensure camera is ready
+        await requestCameraAccess();
+        
+        // Load image if not already loaded
+        if (!cookieImage || !cookieImage.complete || cookieImage.naturalWidth === 0) {
+            console.log('⏳ Loading Cookie.png...');
+            await preloadCookieImages();
+        }
+        
+        // Verify image loaded successfully
+        if (!cookieImage || cookieImage.naturalWidth === 0) {
+            throw new Error('Cookie image not loaded properly');
+        }
+        
+        console.log('✅ Cookie image verified:', cookieImage.width, 'x', cookieImage.height);
+        
+        cookieGameActive = true;
+        cookieTimeLeft = 60;
+        hasFailedCookie = false;
+        traceProgress = 0;
+        tracedPixels.clear();
+        lastPercentage = 0;
+        isDrawing = false;
+        
+        // Start recording cookie game
+        startRecording('cookie');
+        
+        // Show game container
+        cookieGameContainer.classList.add('active');
+        
+        // Start cookie music
+        cookieMusic.currentTime = 0;
+        cookieMusic.play();
+        console.log('🎵 Cookie music started!');
+        
+        // Setup canvas dimensions based on cookie image
+        const maxWidth = window.innerWidth * 0.9;
+        const maxHeight = window.innerHeight * 0.8;
+        const scale = Math.min(maxWidth / cookieImage.width, maxHeight / cookieImage.height);
+        
+        cookieCanvas.width = cookieImage.width * scale;
+        cookieCanvas.height = cookieImage.height * scale;
+        
+        // Ensure canvas has valid dimensions
+        if (cookieCanvas.width <= 0 || cookieCanvas.height <= 0) {
+            throw new Error(`Invalid canvas dimensions: ${cookieCanvas.width}x${cookieCanvas.height}`);
+        }
+        
+        console.log('📐 Canvas dimensions:', cookieCanvas.width, 'x', cookieCanvas.height);
+        console.log('📐 Image dimensions:', cookieImage.width, 'x', cookieImage.height);
+        console.log('📐 Scale factor:', scale);
+        
+        // Verify canvas context
+        if (!cookieCtx) {
+            throw new Error('Failed to get canvas 2D context');
+        }
+        
+        // Draw initial cookie (NO GREEN OVERLAY)
+        cookieCtx.clearRect(0, 0, cookieCanvas.width, cookieCanvas.height);
+        
+        // Set canvas background to white temporarily to test visibility
+        cookieCtx.fillStyle = '#ffffff';
+        cookieCtx.fillRect(0, 0, cookieCanvas.width, cookieCanvas.height);
+        
+        // Draw the cookie image
+        cookieCtx.drawImage(cookieImage, 0, 0, cookieCanvas.width, cookieCanvas.height);
+        
+        console.log('✅ Cookie drawn on canvas (no overlay)');
+        
+        // Create an offscreen canvas to analyze the DARK LINES on the COOKIE
+        const linesCanvas = document.createElement('canvas');
+        linesCanvas.width = cookieImage.width;
+        linesCanvas.height = cookieImage.height;
+        const linesCtx = linesCanvas.getContext('2d');
+        linesCtx.drawImage(cookieImage, 0, 0);
+        cookieLinesData = linesCtx.getImageData(0, 0, linesCanvas.width, linesCanvas.height);
+        
+        // Count total dark pixels in the cookie
+        totalDarkPixels = 0;
+        for (let y = 0; y < cookieLinesData.height; y++) {
+            for (let x = 0; x < cookieLinesData.width; x++) {
+                const index = (y * cookieLinesData.width + x) * 4;
+                const r = cookieLinesData.data[index];
+                const g = cookieLinesData.data[index + 1];
+                const b = cookieLinesData.data[index + 2];
+                const a = cookieLinesData.data[index + 3];
+                const brightness = (r + g + b) / 3;
+                
+                if (isDarkPixel(r, g, b, a)) {
+                    totalDarkPixels++;
+                }
             }
         }
+        
+        console.log(`🍪 Total dark pixels: ${totalDarkPixels} (percentage shows ACTUAL % of lines traced)`);
+        
+        // Reset displays
+        cookieTimer.textContent = cookieTimeLeft;
+        cookieTimer.classList.remove('warning', 'critical');
+        cookieTimer.style.display = 'block'; // Ensure timer is visible
+        cookieTimer.style.visibility = 'visible';
+        cookieTimer.style.opacity = '1';
+        
+        console.log('⏱️ Timer element:', cookieTimer.textContent, 'visible:', cookieTimer.style.display);
+        
+        // Hide instructions immediately - no text during gameplay
+        cookieInstructions.style.opacity = '0';
+        cookieInstructions.style.display = 'none';
+        
+        // Reset progress display
+        cookieProgress.textContent = '0%';
+        cookieProgress.classList.remove('high-progress');
+        cookieProgress.style.display = 'block'; // Ensure progress is visible
+        
+        // Start countdown timer
+        cookieTimerInterval = setInterval(updateCookieTimer, 1000);
+        
+        console.log('🍪 Cookie game started with 60 second timer!');
+        console.log('🎮 Container active class:', cookieGameContainer.classList.contains('active'));
+        console.log('🎨 Canvas visible:', cookieCanvas.offsetWidth, 'x', cookieCanvas.offsetHeight);
+        
+    } catch (error) {
+        console.error('❌ Error starting cookie game:', error);
+        alert('Failed to start cookie game. Cookie.png may be missing or corrupt. Skipping to next game...');
+        
+        // Clean up and skip to next game
+        cookieGameContainer.classList.remove('active');
+        cookieMusic.pause();
+        stopRecording();
+        continueDoorGame();
     }
-    
-    console.log(`🍪 Total dark pixels: ${totalDarkPixels} (percentage shows ACTUAL % of lines traced)`);
-    
-    // Reset displays
-    cookieTimer.textContent = cookieTimeLeft;
-    cookieTimer.classList.remove('warning', 'critical');
-    
-    // Hide instructions immediately - no text during gameplay
-    cookieInstructions.style.opacity = '0';
-    cookieInstructions.style.display = 'none';
-    
-    // Reset progress display
-    cookieProgress.textContent = '0%';
-    cookieProgress.classList.remove('high-progress');
-    
-    // Start countdown timer
-    cookieTimerInterval = setInterval(updateCookieTimer, 1000);
-    
-    console.log('🍪 Cookie game started with 60 second timer!');
 }
 
 // Update timer
