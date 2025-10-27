@@ -5039,6 +5039,15 @@ function updateRecordingsCount() {
 // Update recordings count periodically
 setInterval(updateRecordingsCount, 1000);
 
+// Skip to corrupted credits (before playback)
+function debugSkipToCorruptedCredits() {
+    console.log('📺 DEBUG: Skipping to corrupted credits...');
+    debugStopAllGames();
+    
+    // Call the ending sequence which shows elevator + corrupted credits
+    triggerEndingSequence();
+}
+
 // Skip to final credits (elevator rising)
 function debugSkipToFinalCredits() {
     console.log('🎭 DEBUG: Skipping to final credits with elevator...');
@@ -5088,6 +5097,7 @@ window.debugStartManualRecording = debugStartManualRecording;
 window.debugStopManualRecording = debugStopManualRecording;
 window.debugClearRecordings = debugClearRecordings;
 window.debugDownloadRecordings = debugDownloadRecordings;
+window.debugSkipToCorruptedCredits = debugSkipToCorruptedCredits;
 window.debugSkipToFinalCredits = debugSkipToFinalCredits;
 window.debugResetPlaythrough = debugResetPlaythrough;
 
