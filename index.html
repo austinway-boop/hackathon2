@@ -428,10 +428,10 @@
             <div class="debug-section debug-section-collapsible" data-collapsed="false">
                 <h3 onclick="toggleDebugSection(this)">🎮 Minigames <span class="collapse-icon">▼</span></h3>
                 <div class="debug-section-content">
-                    <button class="debug-btn" onclick="debugStartDoorGame()">🚪 Door Game</button>
-                    <button class="debug-btn" onclick="debugStartRedLight()">🚦 Red Light Green Light</button>
-                    <button class="debug-btn" onclick="debugStartPhone()">📞 Phone Game</button>
-                    <button class="debug-btn" onclick="debugStartShootingGallery()">🎯 Shooting Gallery</button>
+                <button class="debug-btn" onclick="debugStartDoorGame()">🚪 Door Game</button>
+                <button class="debug-btn" onclick="debugStartRedLight()">🚦 Red Light Green Light</button>
+                <button class="debug-btn" onclick="debugStartPhone()">📞 Phone Game</button>
+                <button class="debug-btn" onclick="debugStartShootingGallery()">🎯 Shooting Gallery</button>
                     <button class="debug-btn debug-btn-highlight" onclick="debugStartBlinkGame()">👁️ Blink Game</button>
                     <button class="debug-btn debug-btn-highlight" onclick="debugStartCookieGame()">🍪 Cookie Game</button>
                 </div>
@@ -441,8 +441,8 @@
             <div class="debug-section debug-section-collapsible" data-collapsed="true">
                 <h3 onclick="toggleDebugSection(this)">📞 Phone Game States <span class="collapse-icon">▼</span></h3>
                 <div class="debug-section-content">
-                    <button class="debug-btn" onclick="debugPhoneWithJumpscare()">Phone + Jumpscare ✓</button>
-                    <button class="debug-btn" onclick="debugPhoneNoJumpscare()">Phone (No Jumpscare) ✗</button>
+                <button class="debug-btn" onclick="debugPhoneWithJumpscare()">Phone + Jumpscare ✓</button>
+                <button class="debug-btn" onclick="debugPhoneNoJumpscare()">Phone (No Jumpscare) ✗</button>
                 </div>
             </div>
 
@@ -451,7 +451,7 @@
                 <h3 onclick="toggleDebugSection(this)">🎯 Target Game States <span class="collapse-icon">▼</span></h3>
                 <div class="debug-section-content">
                     <button class="debug-btn" onclick="debugTargetForceJumpscare()">Force Jumpscare ✓</button>
-                    <button class="debug-btn" onclick="debugTargetNeverJumpscare()">Never Jumpscare (Loop) ∞</button>
+                <button class="debug-btn" onclick="debugTargetNeverJumpscare()">Never Jumpscare (Loop) ∞</button>
                 </div>
             </div>
 
@@ -459,9 +459,9 @@
             <div class="debug-section debug-section-collapsible" data-collapsed="true">
                 <h3 onclick="toggleDebugSection(this)">👁️ Blink Game Options <span class="collapse-icon">▼</span></h3>
                 <div class="debug-section-content">
-                    <button class="debug-btn" onclick="debugBlinkGameSlowMode()">Slow Mode (Easy)</button>
-                    <button class="debug-btn" onclick="debugBlinkGameFastMode()">Fast Mode (Hard)</button>
-                    <button class="debug-btn" onclick="debugBlinkGameInstantJumpscare()">Instant Jumpscare</button>
+                <button class="debug-btn" onclick="debugBlinkGameSlowMode()">Slow Mode (Easy)</button>
+                <button class="debug-btn" onclick="debugBlinkGameFastMode()">Fast Mode (Hard)</button>
+                <button class="debug-btn" onclick="debugBlinkGameInstantJumpscare()">Instant Jumpscare</button>
                     <div class="debug-slider-group">
                         <label>Blink Sensitivity: <span id="blinkSensitivityValue">0.35</span></label>
                         <input type="range" min="0.2" max="0.6" step="0.05" value="0.35" class="debug-slider" id="blinkSensitivitySlider" oninput="updateBlinkSensitivity(this.value)">
@@ -492,12 +492,12 @@
             <div class="debug-section debug-section-collapsible" data-collapsed="true">
                 <h3 onclick="toggleDebugSection(this)">💀 Jumpscares <span class="collapse-icon">▼</span></h3>
                 <div class="debug-section-content">
-                    <button class="debug-btn" onclick="debugTriggerJumpscare1()">Jumpscare 1</button>
-                    <button class="debug-btn" onclick="debugTriggerJumpscare2()">Jumpscare 2</button>
-                    <button class="debug-btn" onclick="debugTriggerJumpscare3()">Jumpscare 3</button>
-                    <button class="debug-btn" onclick="triggerPhoneJumpscare()">Phone Jumpscare</button>
-                    <button class="debug-btn" onclick="debugTriggerCameraJumpscare()">Camera Jumpscare</button>
-                    <button class="debug-btn" onclick="debugTriggerBlinkJumpscare()">Blink Jumpscare</button>
+                <button class="debug-btn" onclick="debugTriggerJumpscare1()">Jumpscare 1</button>
+                <button class="debug-btn" onclick="debugTriggerJumpscare2()">Jumpscare 2</button>
+                <button class="debug-btn" onclick="debugTriggerJumpscare3()">Jumpscare 3</button>
+                <button class="debug-btn" onclick="triggerPhoneJumpscare()">Phone Jumpscare</button>
+                <button class="debug-btn" onclick="debugTriggerCameraJumpscare()">Camera Jumpscare</button>
+                <button class="debug-btn" onclick="debugTriggerBlinkJumpscare()">Blink Jumpscare</button>
                     <button class="debug-btn debug-btn-highlight" onclick="debugRandomJumpscare()">🎲 Random Jumpscare</button>
                 </div>
             </div>
@@ -522,8 +522,10 @@
                 <h3>🎬 Main Controls</h3>
                 <button class="debug-btn" onclick="debugBackToElevator()">🛗 Back to Elevator</button>
                 <button class="debug-btn" onclick="debugStopAllGames()">⏹️ Stop All Games</button>
-                <button class="debug-btn debug-btn-highlight" onclick="debugSkipToEnding()">🎬 Skip to Ending</button>
+                <button class="debug-btn debug-btn-highlight" onclick="debugSkipToEnding()">🎬 Skip to Ending (Playback)</button>
+                <button class="debug-btn debug-btn-highlight" onclick="debugSkipToFinalCredits()">🎭 Skip to Final Credits (Elevator Up)</button>
                 <button class="debug-btn debug-btn-danger" onclick="debugResetGame()">🔄 Reset Game</button>
+                <button class="debug-btn debug-btn-danger" onclick="debugResetPlaythrough()">🔄 Reset Playthrough Counter</button>
             </div>
         </div>
     </div>

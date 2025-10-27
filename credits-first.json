@@ -1,0 +1,59 @@
+{
+  "credits": [
+    { "type": "section", "text": "ELEVATOR HORROR" },
+    { "type": "role", "text": "A Game By", "name": "Austin Way" },
+    
+    { "type": "section", "text": "GAME DESIGN" },
+    { "type": "role", "text": "Door Game", "name": "Austin Way" },
+    { "type": "role", "text": "Phone Game", "name": "Austin Way" },
+    { "type": "role", "text": "Shooting Gallery", "name": "Austin Way" },
+    { "type": "role", "text": "Blink Game", "name": "Austin Way" },
+    { "type": "role", "text": "Red Light Green Light", "name": "Austin Way" },
+    { "type": "role", "text": "Cookie Tracing Game", "name": "Austin Way" },
+    
+    { "type": "section", "text": "CAST" },
+    { "type": "role", "text": "The Terrified Player", "name": "YOU" },
+    { "type": "role", "text": "Your Reactions", "name": "Captured Forever" },
+    { "type": "role", "text": "The Doors", "name": "One Was Safe" },
+    { "type": "role", "text": "The Phone", "name": "Should Not Have Answered" },
+    { "type": "role", "text": "The Monster", "name": "Always Watching" },
+    { "type": "role", "text": "The Cookie", "name": "Innocent Circle" },
+    { "type": "role", "text": "The Elevator", "name": "Going Down Forever" },
+    
+    { "type": "section", "text": "SPECIAL THANKS" },
+    { "type": "role", "text": "Your Courage", "name": "For Playing This" },
+    { "type": "role", "text": "Your Webcam", "name": "For Capturing Everything" },
+    { "type": "role", "text": "The Number 13", "name": "Unlucky Floor" },
+    { "type": "role", "text": "Horror Games", "name": "For Inspiration" },
+    { "type": "role", "text": "Dark Hallways", "name": "Always Scary" },
+    { "type": "role", "text": "Your Screams", "name": "Music to Our Ears" },
+    
+    { "type": "section", "text": "ACHIEVEMENTS" },
+    { "type": "role", "text": "You Survived", "name": "Maybe" },
+    { "type": "role", "text": "You Chose A Door", "name": "Bold Choice" },
+    { "type": "role", "text": "You Answered The Phone", "name": "Big Mistake" },
+    { "type": "role", "text": "You Tried Not To Blink", "name": "But You Did" },
+    { "type": "role", "text": "You Traced The Cookie", "name": "Or Tried To" },
+    { "type": "role", "text": "You Made It Here", "name": "Congratulations" },
+    
+    { "type": "section", "text": "DID YOU KNOW?" },
+    { "type": "role", "text": "The Elevator Never Stops", "name": "It Just Goes Down" },
+    { "type": "role", "text": "One Door Was Always Safe", "name": "But Which One?" },
+    { "type": "role", "text": "The Phone Voice", "name": "Was Warning You" },
+    { "type": "role", "text": "The Monster Moves", "name": "When You Blink" },
+    { "type": "role", "text": "Your Reactions", "name": "Were Recorded" },
+    { "type": "role", "text": "Play Again", "name": "For Different Outcomes" },
+    
+    { "type": "section", "text": "THANK YOU" },
+    { "type": "role", "text": "Thanks For Playing", "name": "Hope You Enjoyed" },
+    { "type": "role", "text": "Were You Scared?", "name": "Mission Accomplished" },
+    { "type": "role", "text": "Tell Your Friends", "name": "Scare Them Too" },
+    { "type": "role", "text": "Play Again?", "name": "Things Might Be Different" },
+    
+    { "type": "section", "text": "THE END" },
+    { "type": "role", "text": "...Or Is It?", "name": "Try Again" },
+    { "type": "role", "text": "Different Paths Await", "name": "Choose Wisely" },
+    { "type": "role", "text": "See You Soon", "name": "In The Elevator" }
+  ]
+}
+

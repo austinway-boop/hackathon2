@@ -98,12 +98,28 @@ const eyesCanvas6 = document.getElementById('eyesCanvas6');
 let CREDITS = [];
 
 // Load credits from JSON file
+// Check if this is the first playthrough
+function isFirstPlaythrough() {
+    const hasPlayed = localStorage.getItem('elevatorHorrorPlayed');
+    return !hasPlayed;
+}
+
+// Mark that the game has been played
+function markGameAsPlayed() {
+    localStorage.setItem('elevatorHorrorPlayed', 'true');
+    console.log('📝 Game marked as played');
+}
+
 async function loadCredits() {
     try {
-        const response = await fetch('credits.json');
+        // Determine which credits file to load based on playthrough
+        const creditsFile = isFirstPlaythrough() ? 'credits-first.json' : 'credits-second.json';
+        console.log(`📜 Loading credits from ${creditsFile} (First time: ${isFirstPlaythrough()})`);
+        
+        const response = await fetch(creditsFile);
         const data = await response.json();
         CREDITS = data.credits;
-        console.log(`📜 Loaded ${CREDITS.length} credits from JSON file`);
+        console.log(`📜 Loaded ${CREDITS.length} credits from ${creditsFile}`);
     } catch (error) {
         console.error('❌ Failed to load credits:', error);
         // Fallback to a basic credit if loading fails
@@ -303,6 +319,9 @@ function finalJumpscare() {
 // Start elevator with FINAL credits (elevator stays on screen)
 function startElevatorRisingWithFinalCredits() {
     console.log('🛗 Showing elevator with final credits...');
+    
+    // Mark game as played for next time
+    markGameAsPlayed();
     
     // Stop all sounds
     endScaryDialog.pause();
@@ -5020,6 +5039,29 @@ function updateRecordingsCount() {
 // Update recordings count periodically
 setInterval(updateRecordingsCount, 1000);
 
+// Skip to final credits (elevator rising)
+function debugSkipToFinalCredits() {
+    console.log('🎭 DEBUG: Skipping to final credits with elevator...');
+    debugStopAllGames();
+    
+    // Fade to black first
+    fadeToBlack.classList.add('active');
+    
+    // Then show final credits after brief delay
+    setTimeout(() => {
+        startElevatorRisingWithFinalCredits();
+    }, 1000);
+}
+
+// Reset playthrough counter
+function debugResetPlaythrough() {
+    if (confirm('Reset playthrough counter? This will make the next playthrough show the "first time" credits.')) {
+        localStorage.removeItem('elevatorHorrorPlayed');
+        console.log('🔄 Playthrough counter reset');
+        alert('Playthrough counter reset! Reload the page to see first-time credits.');
+    }
+}
+
 // Expose all new functions to window
 window.toggleDebugSection = toggleDebugSection;
 window.togglePerformanceOverlay = togglePerformanceOverlay;
@@ -5046,6 +5088,8 @@ window.debugStartManualRecording = debugStartManualRecording;
 window.debugStopManualRecording = debugStopManualRecording;
 window.debugClearRecordings = debugClearRecordings;
 window.debugDownloadRecordings = debugDownloadRecordings;
+window.debugSkipToFinalCredits = debugSkipToFinalCredits;
+window.debugResetPlaythrough = debugResetPlaythrough;
 
 console.log('🔧 Advanced Debug Menu Loaded');
 
