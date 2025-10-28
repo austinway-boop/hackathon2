@@ -1607,7 +1607,7 @@ function continueDoorGame() {
 }
 
 // Function to display credits
-function startCredits() {
+async function startCredits() {
     console.log('🎬 Starting credits...');
     creditsActive = true;
     creditsContainer.classList.add('active');
@@ -1615,15 +1615,27 @@ function startCredits() {
     creditsContainer.innerHTML = ''; // Clear any existing content
     creditsContainerRight.innerHTML = '';
     
+    // Load credits from JSON file
+    let CREDITS_DATA = [];
+    try {
+        const response = await fetch('credits-second.json');
+        const data = await response.json();
+        CREDITS_DATA = data.credits;
+        console.log('✅ Loaded credits from credits-second.json');
+    } catch (error) {
+        console.error('❌ Failed to load credits:', error);
+        return;
+    }
+    
     let currentIndex = 0;
     
     // Function to add a single credit (alternates left/right)
     function addCredit() {
-        if (currentIndex >= CREDITS.length) {
+        if (currentIndex >= CREDITS_DATA.length) {
             return; // All credits shown
         }
         
-        const credit = CREDITS[currentIndex];
+        const credit = CREDITS_DATA[currentIndex];
         const useLeftSide = currentIndex % 2 === 0; // Alternate sides
         const targetContainer = useLeftSide ? creditsContainer : creditsContainerRight;
         
